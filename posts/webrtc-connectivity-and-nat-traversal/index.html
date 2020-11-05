@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="">
+<head>
+    
+        
+<meta charset="utf-8">
+<meta name="HandheldFriendly" content="True">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="referrer" content="no-referrer-when-downgrade">
+
+<title>WebRTC 연결성 및 NAT 통과 기법  - syyim</title>
+<meta name="description" content="syyim blog">
+
+<link rel="icon" type="image/x-icon" href="https://lovejaco.github.io/favicon.ico">
+<link rel="apple-touch-icon-precomposed" href="https://lovejaco.github.io/favicon.png">
+
+<link rel="stylesheet" href="https://lovejaco.github.io/css/style.css?rnd=1604589944" />
+
+
+
+<meta property="og:title" content="WebRTC 연결성 및 NAT 통과 기법" />
+<meta property="og:description" content="WebRTC Connectivity and NAT Traversal" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://lovejaco.github.io/posts/webrtc-connectivity-and-nat-traversal/" />
+<meta property="article:published_time" content="2020-06-03T00:00:00+00:00" />
+<meta property="article:modified_time" content="2020-06-03T00:00:00+00:00" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="WebRTC 연결성 및 NAT 통과 기법"/>
+<meta name="twitter:description" content="WebRTC Connectivity and NAT Traversal"/>
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-167094170-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+ 
+
+
+
+
+    
+</head>
+<body>
+    <a class="skip-main" href="#main">Skip to main content</a>
+    <div class="container">
+        <header> 
+            
+                <h1 class="site-header">
+    <a href="/">syyim</a>
+</h1>
+<nav>
+    
+    
+    <a class="" href="https://lovejaco.github.io/about/" title="">About</a>
+    
+    <a class="" href="https://lovejaco.github.io/tags/" title="">Tags</a>
+    
+    <a class="" href="https://lovejaco.github.io/posts/" title="">Archive</a>
+    
+    <a class="" href="https://lovejaco.github.io/contact/" title="">Contact</a>
+    
+</nav>
+
+            
+        </header>
+        <main id="main" tabindex="-1"> 
+            
+
+    <article class="post">
+        <header>
+            <h1>WebRTC 연결성 및 NAT 통과 기법</h1>
+        </header>
+        <div class="content">
+            <p>이 게시물은 WebRTC 연결성 및 NAT 통과 기법이라는 주제의 사내 발표 내용을 정리한 글입니다.</p>
+<h2 id="들어가며">들어가며</h2>
+<p>WebRTC 프로젝트를 시작하려 할때 처음 마주하게 되는것은 아마도 시그널링, SDP, STUN, TURN과 같은 생소한 용어들과 RTCPeerConnection, RTCSessionDescription, RTCIceCandidate 와 같은 WebRTC API를 다루는 코드입니다.</p>
+<p>예제 코드를 작성하기에 앞서 WebRTC 앞에 놓인 인터넷 환경과 (p2p) 연결의 한계, 그리고 이를 극복하기 위한 방법과 원리에 대해 설명 하려고 합니다.</p>
+<h2 id="what-is-webrtc">What is WebRTC?</h2>
+<p><img src="https://lh5.googleusercontent.com/RfgFLvUI1dpj19XnfQDia6CbyTkC6PRBs0ZhGm8RJPvTMbKcb6tiBqbKbPFW-oVoTx8j4KbLmanpj0yuV8_-yJOT_JM_z0P_MdQpohWco_s7RFfD690CqwngnQjO_M9BvdqiAwu9Prc" alt=""></p>
+<p><a href="https://ko.wikipedia.org/wiki/WebRTC">WebRTC(Web Realtime Communications)</a>는 웹 브라우저 간에 플러그인 없이 직접적으로(p2p) 통신할 수 있도록 설계된 API 입니다. W3C 에서 제시된 초안이며, 음성 통화, 영상 통화, P2P 파일 공유 등으로 활용될 수 있습니다</p>
+<h2 id="websocket-vs-webrtc">WebSocket vs WebRTC</h2>
+<p>WebSocket과 WebRTC 모두 양 방향(bi-directional) 및 <a href="https://ko.wikipedia.org/wiki/%EC%9D%B4%EC%A4%91%ED%86%B5%EC%8B%A0">전이중 통신: full-duplex</a> 을 지원 한다는 공통점을 가지고 있습니다. 간단히 차이점에 대해 비교합니다.</p>
+<h3 id="websocket">WebSocket</h3>
+<ul>
+<li>A Client Server Archetecture</li>
+<li>Runs Over TCP</li>
+</ul>
+<h3 id="webrtc">WebRTC</h3>
+<ul>
+<li>allowing direct <a href="https://ko.wikipedia.org/wiki/P2P">peer-to-peer</a> communication,</li>
+<li>Runs Over UDP</li>
+</ul>
+<p><img src="https://bloggeek.me/wp-content/uploads/2019/05/201905-websocket-vs-datachannel.jpg" alt=""></p>
+<h3 id="media-over-a-websocket">Media over a WebSocket</h3>
+<p>WebRTC DataChannel과 마찬가지로 WebSocket 역시 “arraybuffer” 또는 “blob”과 같은 바이너리 형식을 지원하지만 <a href="https://en.wikipedia.org/wiki/Real-time_communication">Real-time communication</a> 데이터를 처리하기에는 적절하지 않습니다.</p>
+<p>대부분의 경우 실시간 미디어는 WebRTC 또는 RTSP, RTMP, HLS 등과 같은 다른 프로토콜을 통해 전송됩니다.</p>
+<h3 id="webrtc-media-transport-and-use-of-rtp">WebRTC: Media Transport and Use of RTP</h3>
+<p><img src="https://hpbn.co/assets/diagrams/f91164cbbb944d8986c90a1e93afcd82.svg" alt=""></p>
+<p>WebRTC는 RTP 프로토콜을 이용하여 미디어를 교환합니다. <a href="https://tools.ietf.org/html/draft-ietf-rtcweb-rtp-usage-26">Web Real-Time Communication (WebRTC: Media Transport and Use of RTP</a>는 WebRTC에서 실시간 전송 프로토콜 (RTP)이 사용되는 방법과 RTP 기능에 대한 요구 사항을 제공합니다.</p>
+<h3 id="실시간-전송-프로토콜-rtp">실시간 전송 프로토콜 (RTP)</h3>
+<p><a href="https://ko.wikipedia.org/wiki/%EC%8B%A4%EC%8B%9C%EA%B0%84_%EC%A0%84%EC%86%A1_%ED%94%84%EB%A1%9C%ED%86%A0%EC%BD%9C">실시간 전송 프로토콜(Real-time Transport Protocol, RTP)</a>은 IP 네트워크 상에서 오디오와 비디오를 전달하기 위한 통신 프로토콜 입니다. RTP는 전화, WebRTC, 텔레비전 서비스, 웹 기반 푸시 투 토크 기능을 포함한 화상 통화 분야 등의 스트리밍 미디어를 수반하는 통신, 엔터테인먼트 시스템에 사용됩니다.</p>
+<p><img src="https://lh6.googleusercontent.com/XCvjkQoMEPNWn8ama4iiO92bvcChyzGFZijcRDFu37m0GFMfNZMdijZHXqT3F7_OzDAmVfzvPM_TKFbhjgBku87rJfXxi4bhafX3jCMdOoQk-YTAm84_wdjVRx8ROkaD_1zz_lwvVm4" alt=""></p>
+<p>RTP는 일반적으로 사용자 데이터그램 프로토콜(UDP)로 동작하며, RTP는 RTCP(RTP Control Protocol)와 결합하여 사용됩니다.</p>
+<h2 id="webrtc-연결성-connectivity">WebRTC 연결성 (connectivity)</h2>
+<p><a href="https://developer.mozilla.org/en-US/docs/Web/API/WebRTC_API/Connectivity">WebRTC connectivity - MDN</a>에서 다양한 WebRTC 관련 프로토콜이 피어 간의 연결을 만들고 데이터 및 미디어를 전송하기 위해 상호 작용하는 방법을 설명합니다.</p>
+<p>그전에, 이런 절차가 왜? 필요한지에 관해 알아보려 합니다.</p>
+<p><img src="https://imagescdn.gettyimagesbank.com/500/18/288/575/0/1030419304.jpg" alt=""></p>
+<p>온라인에서 모르는 누군가와 (p2p) 연결을 시도하는 것은 오프라인에서 연락처를 교환하고 서로 통화를 시도하는 과정과 유사합니다.</p>
+<h3 id="온라인-식별">온라인 식별</h3>
+<p>전화번호를 이용하여 상대방을 식별하는 것과 마찬가지로 인터넷 환경에서는 IP 주소를 이용합니다.</p>
+<h4 id="공인-ip-사설-ip-고정-ip-유동-ip">공인 IP, 사설 IP, 고정 IP, 유동 IP</h4>
+<p>피어간 연결을 위해서 상대의 IP 주소를 알아야 합니다.</p>
+<ul>
+<li>공인 IP: 관리 기관에서 부여한 전세계에서 <strong>유일한</strong> IP<strong>주소</strong></li>
+<li>사설 IP: 임의로 부여한 IP, 자신의 네트워크 안에서만 <strong>유일한</strong> IP<strong>주소</strong></li>
+<li>고정 IP: IP를 반납하기 전까지는 다른 장비에 부여할수 없는 IP</li>
+<li>유동 IP: 사용할 때 남아있는 IP 중에서 부여하는 IP</li>
+</ul>
+<h3 id="signaling">Signaling</h3>
+<p>누군가 나의 전화번호를 이용하여 연결을 시도하면 내 전화기의 전화벨이 울리고 상대방은 대기합니다. 저는 이 연결을 수락할 수도 있고 거부할 수도 있습니다. 때로는 시간 초과로 연결이 실패할 수도 있습니다.
+이처럼 통신 세션을 설정, 제어, 종료하는 프로세스를 시그널링이라고 부릅니다.</p>
+<p>p2p 연결은 ip:port를 open 하거나 listen 함으로서 동작합니다. 따라서 사전에 상호 간 연결 설정을 교환하고 동의해야 합니다.</p>
+<h3 id="natfirewall-problem">NAT/Firewall Problem</h3>
+<p>IP 주소를 알고 있고, 연결할 준비가 되었다고 해서 늘 연결에 성공하는 것은 아닙니다. 공유기와 같은 라우터 장비 내부에 있는 디바이스는 p2p 연결에 어려움을 겪습니다.</p>
+<h2 id="nat-network-address-translation">NAT (Network Address Translation)</h2>
+<p><a href="https://ko.wikipedia.org/wiki/%EB%84%A4%ED%8A%B8%EC%9B%8C%ED%81%AC_%EC%A3%BC%EC%86%8C_%EB%B3%80%ED%99%98">네트워크 주소 변환(영어: network address translation, 줄여서 NAT)</a>은 컴퓨터 네트워킹에서 쓰이는 용어로서, IP 패킷의 TCP/UDP 포트 숫자와 소스 및 목적지의 IP 주소 등을 재기록하면서 라우터를 통해 네트워크 트래픽을 주고 받는 기술을 말합니다.</p>
+<p>가정용 라우터(공유기)와 같이 NAT(Network Address Translation)는 라우터의 일부로서, 그리고 통합된 방화벽의 일부로서 한번에 두가지 문제를 처리합니다.</p>
+<p><img src="https://lh3.googleusercontent.com/W44dghqO284h-65OyhXeKgrqpsrKy0g4OdXE6DCI6ZYd6zLXUGv75bqyPA1iGcNI3Siqx1RJ1jQqy_o6-fYRxiw9Zx7wYv90hDuCl3QhXZKMCjNe--kqt5J1oIQU0V-i_Wl4V_r_GMU" alt=""></p>
+<p>인터넷 공인(Publid) IP 주소는 한정되어 있기 때문에 NAT는 사설(Private) IP를 사용하면서 이를 공인 IP로 상호변환할수 있도록 지원 합니다.</p>
+<p><img src="https://ltwus2ix28x10gixx34jeigv-wpengine.netdna-ssl.com/wp-content/uploads/2013/08/NAT-post-image-1.png" alt=""></p>
+<p>공개된 인터넷과 사설망 사이에 방화벽을 설치하여 외부 공격으로부터 네트워크를 보호하는 수단으로 사용됩니다.</p>
+<h3 id="일반적인-nat-시나리오">일반적인 NAT 시나리오</h3>
+<p><img src="https://lh5.googleusercontent.com/UEU4ipyrC9ObBe6P4WstA8klYEpcUTA-sCrO8lzCNYajODZMhLBP3-GTzjl3B0OWB4HuPsSw8Vjj9qAWqZgAR_Hd-YSE0xRcOgyOYCYzQ3rbzXvHz26hiWINIt3WLmDS2hrgd48-J1o" alt=""></p>
+<p>대부분의 방화벽은 인터넷의 특정 패킷이 NAT를 통과하도록 허용하지만, 호스트가 먼저 방화벽을 통해 패킷을 내보낸 경우에만 가능합니다. 본질적으로 통신은 LAN의 호스트에 의해 시작되어야 합니다.</p>
+<p>모든 패킷에는 5개의 튜플로 이루어진 TCP/IP 정보로 구성되어 있습니다.</p>
+<blockquote>
+<p>source [ip:port], destination[ip:port], transport protocol</p>
+</blockquote>
+<p>패킷이 NAT/방화벽 장치를 통과하면 소스 IP 및 소스 포트가 새로운 소스 IP 및 소스 포트로 변경됩니다. 그런 다음 “내부” 소스 IP 및 소스 포트와 “외부” 소스 IP 및 소스 포트 사이의 바인딩(이를 NAT 바인딩이라고 하며) 정보를 테이블에 저장합니다.</p>
+<p><img src="https://ltwus2ix28x10gixx34jeigv-wpengine.netdna-ssl.com/wp-content/uploads/2013/08/NAT-post-image-3.png" alt=""></p>
+<p>인터넷에 있는 호스트는 변경된 “외부” IP:Port만 알 수 있습니다. 호스트가 이 “외부” IP:Port를 확인하고 이 주소로 패킷을 보내면 먼저 NAT/방화벽 장치로 도착합니다. NAT/방화벽 장치는 NAT 테이블을 조회한 다음, NAT 바인딩을 기반으로 대상(target) IP:Port를 변경하고 패킷을 내부 호스트로 전달합니다.</p>
+<h3 id="nats-and-peer-to-peer">NATs and Peer-to-Peer</h3>
+<p><img src="https://ltwus2ix28x10gixx34jeigv-wpengine.netdna-ssl.com/wp-content/uploads/2013/08/NAT-post-image-4.png" alt=""></p>
+<p>클라이언트 - 서버 간 통신은 NAT/방화벽을 잘 통화하지만 p2p 연결에는 어려움이 따릅니다. 각 엔드포인트 사이에 NAT/방화벽 장치가 존재할 가능성이 있기 때문입니다.</p>
+<p><img src="https://ltwus2ix28x10gixx34jeigv-wpengine.netdna-ssl.com/wp-content/uploads/2013/08/NAT-post-image-5.png" alt=""></p>
+<p>엔드포인트는 자신과 통신하려는 피어 사이에 어떤 종류의 네트워크 토폴로지(링크, 노드의 요소들)가 있는지 알 수있는 방법이 없습니다. 따라서, 로컬 호스트에서 전송한 패킷이 방화벽에 의해 차단 되는 것을 알지 못하며, 추가적으로 엔드포인트에 의해 제출된 주소는 그 사이에 있는 NAT 때문에 다른 피어가 연결할 수 조차 없습니다.</p>
+<h2 id="nat를-넘어-p2p-연결하기">NAT를 넘어 P2P 연결하기</h2>
+<ol>
+<li>Relaying</li>
+<li>Connection Reversal</li>
+<li>Hole Punching
+<ol>
+<li>UDP</li>
+<li>TCP</li>
+</ol>
+</li>
+</ol>
+<h3 id="relaying">Relaying</h3>
+<p>Relaying 방법은 사설 IP 주소를 가지는 두 단말 간에 직접 통신을 할 수 없다면 공인 IP 주소를 가지는 외부 서버를 통해 P2P 데이터 패킷을 Relay하자는 개념입니다.</p>
+<h3 id="connection-reversal">Connection Reversal</h3>
+<p><img src="https://bford.info/pub/net/p2pnat/img7.png" alt=""></p>
+<p>두 호스트 모두 잘 알려진 서버에 연결되어 있고 피어 중 하나만 NAT 뒤에있을 때 통신을 가능하게하기 위해 연결 반전이라고 알려진 간단하지만 제한된 기술을 사용합니다. B가 A에 대한 연결을 시작하려는 경우 A에 대한 모든 직접 연결 시도는 A의 NAT에 의해 차단됩니다. 대신 서버 S를 통해 A로 연결 요청을 릴레이하여 A에게 B로의 &ldquo;역방향&rdquo; 연결을 다시 시도하도록 요청합니다. 이 아이디어는 기술적인 한계에도 불구하고, 다음에 설명하는 일반적인 홀 펀칭 기술의 기초가 됩니다.</p>
+<h3 id="hole-puncing">Hole Puncing</h3>
+<p>P2P 통신을 목적으로 Routing Table 을 작성하기 위해 사전에 상대방과 패킷을
+주고받게 하여 각자의 공유기에 Routing Table을 작성하는 것을 홀 펀칭이라고 합니다.</p>
+<p><img src="https://www.researchgate.net/profile/Wilhelm_Hasselbring/publication/250030374/figure/fig2/AS:298352580284420@1448144206583/Simplified-hole-punching-example.png" alt=""></p>
+<p>흔히 <a href="https://en.wikipedia.org/wiki/UDP_hole_punching">UDP 홀펀칭</a> 으로 널리 알려졌지만, <a href="https://en.wikipedia.org/wiki/TCP_hole_punching">TCP에 대해서도 적용할 수 있습니다.</a></p>
+<p><img src="https://bford.info/pub/net/p2pnat/img8.png" alt=""></p>
+<p>자세한 설명은 다음의 링크에서 확인할 수 있습니다.</p>
+<ul>
+<li><a href="https://bford.info/pub/net/p2pnat/">– Bryan Ford’s Home Page</a></li>
+<li><a href="https://www.netmanias.com/ko/post/blog/6263/nat-network-protocol-p2p/p2p-nat-nat-traversal-technic-rfc-5128-part-2-udp-hole-punching">P2P와 NAT: NAT 통과 기법 소개 (RFC 5128) - 2편: UDP Hole Punching | NETMANIAS</a></li>
+</ul>
+<h2 id="webrtc-tools-for-natfirewall-traversal">WebRTC tools for NAT/Firewall Traversal</h2>
+<p>WebRTC는 NAT 통과 기법을 위해 다음의 네트워크 표준을 이용합니다.
+이 표준들은 위에서 설명한 P2P 연결 방법에 대한 구체적이고 표준화된 연결 방법입니다.</p>
+<h3 id="interactive-connectivity-establishment-ice--rfc-5245">Interactive Connectivity Establishment (ICE) – RFC 5245</h3>
+<h4 id="시그널링">시그널링</h4>
+<p>WebRTC에서 서로 다른 네트워크에 있는 2개의 디바이스들을 서로 연결하기 위해서는, 각 디바이스들의 위치를 발견하는 방법과 미디어 포맷 협의가 필요합니다. 이 프로세스를 <strong>시그널링</strong> <strong>signaling</strong>이라 부르고 상호 간에 동의된 서버에 연결합니다. 이 서버는 각 디바이스들이 <strong>negotiation</strong>(협상) 메시지들을 교환할 수 있도록 중개합니다.</p>
+<h4 id="the-signaling-server">The signaling server</h4>
+<p>WebRTC는 시그널링 정보에 관한 transport 메커니즘을 제시하지 않습니다. 두 피어들 사이에서 정보를 전달해 줄 수 있는 것이라면 어떤 것이든 상관 없습니다.</p>
+<ul>
+<li>XMLHttpRequest</li>
+<li>long polling</li>
+<li>WebSocket</li>
+<li>MQTT Over WebSocket</li>
+</ul>
+<blockquote>
+<p>시그널링 서버는 SDP를 전달하지만 데이터 내용은 몰라도 됩니다. 메시지의 내용들은 각 피어에서 생성되고 시그널링 서버를 통해 상대편으로 전송 됩니다.</p>
+</blockquote>
+<h4 id="session-description-protocol-sdp">Session Description Protocol (SDP)</h4>
+<p><a href="https://ko.wikipedia.org/wiki/%EC%84%B8%EC%85%98_%EA%B8%B0%EC%88%A0_%ED%94%84%EB%A1%9C%ED%86%A0%EC%BD%9C">세션 기술 프로토콜 - SDP</a>은 스트리밍 미디어의 초기화 인수를 기술하기 위한 포맷으로. 이 규격은 IETF의 RFC 4566로 규정되어 있습니다.</p>
+<p>SDP는 해상도, 형식, 코덱, 암호화등의 멀티미디어 컨텐츠의 연결을 기술(Description)하기 위한 표준 입니다. 기술적으로는, 실제 프로토콜이 아니라 장치간에 미디어를 공유하는 연결을 설명하는데 사용되는 데이터 형식입니다.</p>
+<h3 id="ice-candidates">ICE candidates</h3>
+<p>피어는 (위에서 설명한 SDP로) 미디어에 대한 정보를 교환 할뿐만 아니라 네트워크 연결에 대한 정보를 교환해야합니다. 이를 ICE candidates라고 하며 피어가(직접적으로 또는 TURN 서버를 통해 경유하여) 사용 가능한 방법을 자세히 설명합니다.</p>
+<blockquote>
+<p>예를 들어 연락처를 교환할때 보통은 휴대폰 번호만을 주고받는것이 일반적이지만, 필요에 따라 집 또는 직장 번호를 교환하기도 합니다. 이 처럼 통화 가능한 연락처의 목록을 ICE candidates (ip, port, transport) 라고 부르며, 피어가 능동적으로 이 후보들을 설명합니다.</p>
+</blockquote>
+<p>일반적으로 각각의 피어는 가장 좋은 후보에서 나쁜 후보 순서로 제안하고 연결을 위해 나아가게 됩니다. UDP 후보가(더 빠르고, 미디어 스트림이 비교적 쉽게 인터럽트로부터 회복할 수 있기 때문에) 이상적이지만, ICE 표준은 TCP 후보 역시 허용합니다.</p>
+<h4 id="rtcicecandidatetype">RTCIceCandidateType</h4>
+<ul>
+<li>host
+호스트 후보는 호스트의 인터페이스(VPN 인터페이스를 포함하여 물리적 또는 가상)에 연결된 실제 IP 주소 입니다.</li>
+<li>srflx
+server reflexive candidate는 STUN / TURN 서버에 의해 식별된 IP 주소로, 클라이언트의 공인 IP 주소 입니다.</li>
+<li>prflx
+peer reflexive candidate는 각 피어에 의해 식별된 IP 주소, 각 피어간 STUN Check를 통하여 식별된 IP 주소입니다.</li>
+<li>relay
+relay candidate는 server reflexive candidate( &ldquo;srflx&rdquo;)처럼 생성되지만 STUN 대신 TURN을 사용합니다.</li>
+</ul>
+<h3 id="session-traversal-utilities-for-nat-stun--rfc-5389">Session Traversal Utilities for NAT (STUN) – RFC 5389</h3>
+<p><img src="https://d20hvw4zeymqbm.cloudfront.net/wp-content/uploads/2013/09/stun.png" alt=""></p>
+<p><a href="http://en.wikipedia.org/wiki/STUN">Session Traversal Utilities for NAT (STUN)</a>은 P2P 통신을 위해 호스트가 NAT의 존재 유무 및 NAT 타입을 식별(discover)하고 또한 NAT에 의해 변경되는 외부 IP 주소 및 Port 값을 발견하기 위한 네트워크 프로토콜입니다.</p>
+<p>STUN은 클라이언트-서버 프로토콜입니다. STUN 클라이언트는 공용 IP 및 포트를 발견하기 위해 STUN 서버에 요청을 보내고 STUN 서버는 응답을 리턴합니다. 요청에는 일반적으로 UDP를 통해 전송되는 Binding Request와 TCP 와 TLS (보안 통신) 를 통해 전송되는 Shared Secret Request입니다.</p>
+<p>stun message type</p>
+<ul>
+<li>0x0001 : Binding Request</li>
+<li>0x0101 : Binding Response</li>
+<li>0x0111 : Binding Error Response</li>
+<li>0x0002 : Shared Secret Request</li>
+<li>0x0102 : Shared Secret Response</li>
+<li>0x0112 : Shared Secret Error Response</li>
+</ul>
+<h3 id="traversal-using-relay-nat-turn--rfc-5766">Traversal Using Relay NAT (TURN) – RFC 5766</h3>
+<p>위에서 Relaying에 대해 설명한것과 마찬가지로 WebRTC 역시 공인 IP 주소를 가지는 외부 서버를 통해 P2P 데이터 패킷을 Relay 하는데 이를 TURN이라고 부릅니다.</p>
+<p><img src="https://img.favpng.com/7/5/3/traversal-using-relays-around-nat-stun-nat-traversal-computer-servers-webrtc-png-favpng-mQRBjt11JcX3SKAL9YixwsCLZ.jpg" alt=""></p>
+<p>몇몇의 라우터들은 Symmetric NAT이라고 불리우는 NAT를 채용하고 있습니다. <a href="http://en.wikipedia.org/wiki/TURN">Traversal Using Relays around NAT (TURN)</a> 은 TURN 서버와 연결하고 모든 정보를 서버에 전달하는 것으로 Symmetric NAT 제한을 우회하는 것을 의미합니다. 이것은 명백히 오버헤드가 발생하므로 이 방법은 다른 대안이 없을 경우만 사용하게 됩니다.</p>
+<p><img src="https://www.frozenmountain.com/hs-fs/hubfs/4%20-%20blog%20images/Turn%20Stun%20chart.png?width=1490&amp;name=Turn%20Stun%20chart.png" alt=""></p>
+<h2 id="webrtc-call-flow-호출-흐름---api">WebRTC Call Flow (호출 흐름) - API</h2>
+<p>이제 WebRTC 의 연결 흐름에 대해 알아 보겠습니다.</p>
+<h3 id="signalling">Signalling</h3>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">configs</span> <span style="color:#f92672">=</span> {
+  <span style="color:#a6e22e">iceServers</span><span style="color:#f92672">:</span> [
+    {
+      <span style="color:#a6e22e">urls</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;stun:stun.l.google.com:19302&#34;</span>,
+    },
+    {
+      <span style="color:#a6e22e">urls</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;turn:192.158.29.39:3478?transport=udp&#34;</span>,
+      <span style="color:#a6e22e">credential</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;JZEOEt2V3Qb0y27GRntt2u2PAYA=&#34;</span>,
+      <span style="color:#a6e22e">username</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;28224511:1379330808&#34;</span>,
+    },
+    {
+      <span style="color:#a6e22e">urls</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;turn:192.158.29.39:3478?transport=tcp&#34;</span>,
+      <span style="color:#a6e22e">credential</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;JZEOEt2V3Qb0y27GRntt2u2PAYA=&#34;</span>,
+      <span style="color:#a6e22e">username</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;28224511:1379330808&#34;</span>,
+    },
+  ],
+};
+
+<span style="color:#66d9ef">const</span> <span style="color:#a6e22e">peerConnectionOptions</span> <span style="color:#f92672">=</span> {
+  <span style="color:#a6e22e">optional</span><span style="color:#f92672">:</span> [
+    {
+      <span style="color:#a6e22e">DtlsSrtpKeyAgreement</span><span style="color:#f92672">:</span> <span style="color:#66d9ef">true</span>,
+    },
+  ],
+};
+
+<span style="color:#66d9ef">const</span> <span style="color:#a6e22e">myPeerConnection</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">RTCPeerConnection</span>(<span style="color:#a6e22e">configs</span>, <span style="color:#a6e22e">peerConnectionOptions</span>);
+</code></pre></div><p><img src="https://www.html5rocks.com/ko/tutorials/webrtc/infrastructure/turn.png" alt=""></p>
+<p>RTCPeerConnection 설정에 따라 STUN/TURN 서버의 구성이 변경될 수 있습니다.</p>
+<h4 id="offer--answer">Offer / Answer</h4>
+<p><img src="https://hpbn.co/assets/diagrams/69aa329ffbfae6fd0446de77623c93fb.svg" alt=""></p>
+<h4 id="offer-sdp">Offer SDP</h4>
+<p><img src="https://lh4.googleusercontent.com/5MUbymu8G_iRPSn_ks-eLO8OH7DP6NW_rXMtp9BgWY29T4LZi-JVq2YOXuWey5lmEuCqihms-xzEi2RFUb1SblhtyxbhSyA7cOaAIwrrnolDBpTcQatVPGNBPIjEZr0XtFLXrISdQNc" alt=""></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#a6e22e">myPeerConnection</span>.<span style="color:#a6e22e">createOffer</span>().<span style="color:#a6e22e">then</span>(<span style="color:#66d9ef">function</span> (<span style="color:#a6e22e">offer</span>) {
+  <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">myPeerConnection</span>.<span style="color:#a6e22e">setLocalDescription</span>(<span style="color:#66d9ef">new</span> <span style="color:#a6e22e">RTCSessionDescription</span>(<span style="color:#a6e22e">offer</span>));
+});
+</code></pre></div><h4 id="answer-sdp">Answer SDP</h4>
+<p><img src="https://lh6.googleusercontent.com/xQc7L7-RTOyNkVTIIjwR6fF_iPziPsyw9Fx3l_GGmN8rlh4l-11ylMHo-X0jg4b0L2k0R_cL9-HoKRGveaoq-v4HegwWqyB8jR5qpNB2Fl1m8MUXZXZmBzzZIgbK9oytd-BBUvgfatg" alt=""></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#a6e22e">myPeerConnection</span>
+  .<span style="color:#a6e22e">setRemoteDescription</span>(<span style="color:#66d9ef">new</span> <span style="color:#a6e22e">RTCSessionDescription</span>(<span style="color:#a6e22e">description</span>))
+  .<span style="color:#a6e22e">then</span>(<span style="color:#66d9ef">function</span> () {
+    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">createMyStream</span>();
+  });
+</code></pre></div><p>시그널 서버로부터 전달받은 상대의 remoteDescription을 등록합니다.</p>
+<p><img src="https://cdn-images-1.medium.com/max/800/1*X4iOI4qIKwoC8oK7AFdr6w.jpeg" alt=""></p>
+<ol>
+<li>A: RTCPeerConnection.createOffer() 호출하여 제안(Offer) 형식(sdp 포맷)을 생성</li>
+<li>A: peerConnection.setLocalDescription(sdp) 생성된 제안을 peerConnection 객체에 등록</li>
+<li>A: send To SignalServer(sdp): <strong>sendOffer</strong> 시그널 서버로 제안(SDP) 전송</li>
+<li>B: receive From SignalServer(sdp): <strong>receiveOffer</strong> B가 시그널 서버로부터 제안(SDP)을 수신</li>
+<li>B: peerConnection.setRemoteDescription(sdp) B가 A의 제안(SDP)을 peerConnection 객체에 등록</li>
+<li>B: RTCPeerConnection.createAnswer(): B가 수락(Answer) 형식(sdp 포맷)을 생성</li>
+<li>B: peerConnection.setLocalDescription(sdp) 생성된 수락을 peerConnection 객체에 등록</li>
+<li>B: send To SignalServer(sdp): <strong>sendAnswer</strong> 시그널 서버로 수락(SDP) 전송</li>
+<li>A: receive From SignalServer(sdp): <strong>receiveAnswer</strong> A가 시그널 서버로 부터 B의 수락 형식을 수신</li>
+<li>A: peerConnection.setRemoteDescription(sdp) A가 B의 수락(SDP)을 peerConnection 객체에 등록</li>
+</ol>
+<h3 id="interactive-connectivity-establishment-ice">Interactive Connectivity Establishment (ICE)</h3>
+<p>대화식 연결 설정</p>
+<h4 id="ice-gathering">Ice gathering</h4>
+<p>setLocalDescription 호출이 완료되면 피어는 자신의 ice 후보를 수집합니다.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#a6e22e">pc</span>.<span style="color:#a6e22e">onicecandidate</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">function</span> (<span style="color:#a6e22e">event</span>) {
+  <span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">event</span>.<span style="color:#a6e22e">candidate</span>) {
+    <span style="color:#75715e">// event.candidate가 존재하면 원격 유저에게 candidate를 전달합니다.
+</span><span style="color:#75715e"></span>  } <span style="color:#66d9ef">else</span> {
+    <span style="color:#75715e">// 모든 ICE candidate가 원격 유저에게 전달된 조건에서 실행됩니다.
+</span><span style="color:#75715e"></span>    <span style="color:#75715e">// candidate = null
+</span><span style="color:#75715e"></span>  }
+};
+</code></pre></div><h4 id="exchange-ice-candidates">Exchange Ice Candidates</h4>
+<p>각 피어는 식별된 자신의 ice candidates를 SDP에 패킹하거나 독립적으로 전송하도록 선택할 수 있습니다.</p>
+<ul>
+<li>
+<p>SDP에 포함<br>
+ICE 후보가 SDP 제안/응답에 포함될 수 있습니다. 이렇게 하려면 ICE 수집 프로세스가 완료 될 때까지 기다린 다음 SDP 제안 / 응답을 보내십시오.</p>
+</li>
+<li>
+<p>TrickleICE<br>
+<strong>ICE trickling</strong> 은 초기 offer 혹은 answer를 다른 유저에게 이미 전달을 했음에도 계속해서 candidate를 보내는 과정을 뜻합니다. 이 속성은 <a href="https://developer.mozilla.org/ko/docs/Web/API/RTCPeerConnection/setRemoteDescription">RTCPeerConnection.setRemoteDescription()</a>가 호출된 후에만 설정됩니다. TrickleICE가 구현 된 경우 (Chrome 및 Firefox) 첫 번째 양호한 ICE 후보가 발견되면 연결이 시작됩니다.</p>
+</li>
+</ul>
+<p>Trickle ICE는 시그널 채널을 통해 더 많은 트래픽을 생성하지만 p2p 연결을 시작하는데 필요한 시간이 크게 향상 될 수 있습니다.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#a6e22e">signalingChannel</span>.<span style="color:#a6e22e">onmessage</span> <span style="color:#f92672">=</span> (<span style="color:#a6e22e">receivedString</span>) =&gt; {
+  <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">message</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">JSON</span>.<span style="color:#a6e22e">parse</span>(<span style="color:#a6e22e">receivedString</span>);
+  <span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">message</span>.<span style="color:#a6e22e">ice</span>) {
+    <span style="color:#a6e22e">pc</span>.<span style="color:#a6e22e">addIceCandidate</span>(<span style="color:#a6e22e">message</span>.<span style="color:#a6e22e">ice</span>).<span style="color:#66d9ef">catch</span>((<span style="color:#a6e22e">e</span>) =&gt; {
+      <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">&#34;Failure during addIceCandidate(): &#34;</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">e</span>.<span style="color:#a6e22e">name</span>);
+    });
+  } <span style="color:#66d9ef">else</span> {
+    <span style="color:#75715e">// handle other things you might be signaling, like sdp
+</span><span style="color:#75715e"></span>  }
+};
+</code></pre></div><p>Websocket등을 이용하여 시그널 서버로 전송하고, 전송받은 후보를 등록</p>
+<h5 id="stun-check--dtls--rtp--sctp">STUN Check / DTLS / RTP / SCTP</h5>
+<p><img src="https://lh4.googleusercontent.com/Ag31x7cJXPixbM1pwasQil5zHDjJwhRqAe56CHUhOUgYalTqdL4_sRCJawEOF85m1KS2kzNkSY8mZlQuc9QXFTNLv8ml_Xci60rxwviDERQ-B9f0K5vGt79699ce88YtxshQoU68X48" alt=""></p>
+<p>전달받은 상대방의 연결 후보(IP 주소)를 이용하여 연결을 시도 합니다.</p>
+<ul>
+<li>STUN<br>
+STUN 프로토콜을 이용하여 확인 합니다.
+서로 동시에 연결을 시도하는 경우 STUN 에러가 발생하기도 합니다. 그러나 프로토콜 흐름에 따라 한쪽에서 기다리고 다른 한쪽에서 연결을 시도하여 확인 합니다.</li>
+<li>DTLS<br>
+STUN 연결이 확인되면 DTLS(보안 연결)을 이용하여 RTP 스트림에 사용되는 키를 설정합니다. <a href="https://tools.ietf.org/html/rfc5764">RFC 5764 - Datagram Transport Layer Security (DTLS) Extension to Establish Keys for the Secure Real-time Transport Protocol (SRTP)</a></li>
+<li>RTCP<br>
+<a href="https://ko.wikipedia.org/wiki/RTCP">RTCP</a> 는 RTP 세션의 대역 외(out-of-band) 통계 및 제어 정보를 제공한다. 멀티미디어 데이터의 전달, 패키징 시에 RTP와 함께 사용하지만 RTCP가 직접 미디어 데이터를 전송하지는 않는다.</li>
+<li>RTP</li>
+</ul>
+<p>감사합니다.</p>
+<p>[참고 링크]</p>
+<ul>
+<li><a href="https://webrtchacks.com/an-intro-to-webrtcs-natfirewall-problem/">An Intro to WebRTC’s NAT/Firewall Problem - webrtcHacks</a></li>
+<li><a href="https://developer.mozilla.org/ko/docs/Web/API/RTCPeerConnection">RTCPeerConnection - Web API | MDN</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/API/WebRTC_API/Connectivity">WebRTC connectivity - Web APIs | MDN</a></li>
+<li><a href="https://developer.mozilla.org/ko/docs/Web/API/WebRTC_API/Signaling_and_video_calling">Signaling and video calling - Web API | MDN</a></li>
+<li><a href="https://www.frozenmountain.com/developers/blog/webrtc-nat-traversal-methods-a-case-for-embedded-turn">WebRTC NAT Traversal Methods: A Case for Embedded TURN</a></li>
+<li><a href="https://bloggeek.me/webrtc-vs-websockets/">WebRTC vs WebSockets • BlogGeek.me</a></li>
+<li><a href="https://www.educba.com/websockets-vs-webrtc/">websockets vs webrtc | 7 Most Amazing Comparisons To Learn</a></li>
+<li><a href="https://hpbn.co/webrtc/">Browser APIs and Protocols: WebRTC - High Performance Browser Networking(O’Reilly)</a></li>
+<li><a href="https://www.html5rocks.com/ko/tutorials/webrtc/infrastructure/">WebRTC in the real world: STUN, TURN and signaling - HTML5 Rocks</a></li>
+<li><a href="https://www.3cx.com/pbx/what-is-a-stun-server/">What is a STUN Server and how does it work?</a></li>
+<li><a href="https://tools.ietf.org/id/draft-ietf-ice-rfc5245bis-14.html">Interactive Connectivity Establishment (ICE): A Protocol for Network Address Translator (NAT) Traversal</a></li>
+<li><a href="https://www.onsip.com/voip-resources/voip-fundamentals/webrtc-signaling">What is WebRTC Signaling?</a></li>
+<li><a href="https://indigoo.com/petersblog/?p=215">https://indigoo.com/petersblog/?p=215</a></li>
+<li><a href="https://bford.info/pub/net/p2pnat/">– Bryan Ford’s Home Page</a></li>
+<li><a href="https://snack.planetarium.dev/kor/2019/04/nat_traversal_1/">NAT를 넘어서 가자</a></li>
+<li><a href="https://snack.planetarium.dev/kor/2019/06/nat_traversal_2/">예제로 보는 TURN</a></li>
+<li><a href="https://juyoung-1008.tistory.com/27">안드로이드 WebRTC 시작하기 -3</a></li>
+</ul>
+
+        </div>
+        
+
+
+<div class="article-info">
+    
+        <div class="article-date">2020-06-03</div>
+    
+    <div class="article-taxonomies">
+        
+            
+                <ul class="article-tags">
+                    
+                        <li><a href="https://lovejaco.github.io/tags/webrtc">#webrtc</a></li>
+                    
+                </ul>
+        
+    </div>
+</div>
+
+    </article>
+    
+
+
+        </main>
+        <footer>
+            
+                
+                
+
+                <p>© sungyeol.yim, 2020<br>
+Powered by <a target="_blank" href="https://gohugo.io/">Hugo</a>, theme <a target="_blank" href="https://github.com/mitrichius/hugo-theme-anubis">Anubis</a>.
+</p>
+            
+        </footer>
+    </div>
+</body>
+</html>

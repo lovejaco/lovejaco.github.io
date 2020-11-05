@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="">
+<head>
+    
+        
+<meta charset="utf-8">
+<meta name="HandheldFriendly" content="True">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="referrer" content="no-referrer-when-downgrade">
+
+<title>[번역] 코드 리뷰 하는 이유  - syyim</title>
+<meta name="description" content="syyim blog">
+
+<link rel="icon" type="image/x-icon" href="https://lovejaco.github.io/favicon.ico">
+<link rel="apple-touch-icon-precomposed" href="https://lovejaco.github.io/favicon.png">
+
+<link rel="stylesheet" href="https://lovejaco.github.io/css/style.css?rnd=1604589944" />
+
+
+
+<meta property="og:title" content="[번역] 코드 리뷰 하는 이유" />
+<meta property="og:description" content="[번역] Why review code? – Sophie Alpert" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://lovejaco.github.io/posts/why-review-code/" />
+<meta property="article:published_time" content="2019-01-16T00:00:00+00:00" />
+<meta property="article:modified_time" content="2019-01-16T00:00:00+00:00" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="[번역] 코드 리뷰 하는 이유"/>
+<meta name="twitter:description" content="[번역] Why review code? – Sophie Alpert"/>
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-167094170-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+ 
+
+
+
+
+    
+</head>
+<body>
+    <a class="skip-main" href="#main">Skip to main content</a>
+    <div class="container">
+        <header> 
+            
+                <h1 class="site-header">
+    <a href="/">syyim</a>
+</h1>
+<nav>
+    
+    
+    <a class="" href="https://lovejaco.github.io/about/" title="">About</a>
+    
+    <a class="" href="https://lovejaco.github.io/tags/" title="">Tags</a>
+    
+    <a class="" href="https://lovejaco.github.io/posts/" title="">Archive</a>
+    
+    <a class="" href="https://lovejaco.github.io/contact/" title="">Contact</a>
+    
+</nav>
+
+            
+        </header>
+        <main id="main" tabindex="-1"> 
+            
+
+    <article class="post">
+        <header>
+            <h1>[번역] 코드 리뷰 하는 이유</h1>
+        </header>
+        <div class="content">
+            <p>원문 링크: <a href="https://sophiebits.com/2018/12/25/why-review-code.html">Why review code? – Sophie Alpert</a></p>
+<p>최근 한 친구가 코드 리뷰를 하는 것이 왜 중요한지 저에게 물어보았습니다. 대부분의 실리콘 밸리 회사들은 모든 변경 사항에 대한 코드 리뷰를 수행하기 위해 최소한 두 명 이상을 편성합니다. 이전 회사 중 한 곳에서는 사전-동의 (opt-in) 코드 리뷰를 (드물게) 수행하였지만, 구글에서 새로 온 직원이 우리와 합류하여 모든 코드를 검토하도록 권장하였습니다. 그것은 정말 위대한 결정이었습니다.</p>
+<p>여러분이 만약 코드 리뷰를 제대로 한다면, 코드 리뷰가 부담스러워서는 안됩니다. 여러분과 여러분의 리뷰어는 적대자가 아닙니다. 최고의 소프트웨어를 구축하기 위해 함께 노력하고 있습니다. (개인적인 피드백(지적사항[역자-주])이 없도록 하는 것이 중요합니다. - 비록 코드를 변경해야 할 필요가 있다 하더라도, 그 자체가 문제는 아닙니다. 피드백을 받는 것이 일반적이며 성장에 도움이 됩니다.)</p>
+<p>일부 회사는 각 코드에 대한 책임을 지는 엄격한 “담당자(Owner)”와 함께 얼마나 많은 사람들이 해당 코드를 검토해야 하는지에 대한 복잡한 규칙을 가지고 있습니다. 저는 그것이 필요하다고 느껴본 적이 없습니다. 반드시 한 사람만이 코드를 검토해야 한다는 유일한 규칙의 간단한 시스템을 선호합니다. 실제로, 당신이 변경한 특정 코드를 유지 관리하는 담당자에게 계속 검토 요청을 보내고 있다면, 되도록 어려운 요구 사항을 포함하지 않는 것이 좋습니다.</p>
+<p>다음은 제가 코드 리뷰가 중요하다고 생각하는 가장 큰 이유입니다.</p>
+<ol>
+<li>
+<p><strong>The code itself.</strong> 코드 리뷰의 가장 분명한 가치는 “버그 잡기”입니다. 조금 더 멀리 내다보면, 작성자가 미처 알지 못했던 “모범 사례(best practices)”또는 무언의 규칙을 포착하고 실제 구현 코드로 응답하여 더 나은 코드를 만들 수 있도록 검토자가 도움을 줄 수 있습니다.</p>
+</li>
+<li>
+<p><strong>Macro-level knowledge sharing.</strong> 여러분이 다른 사람의 코드를 검토하면서, 후에 당신에게 도움이 될 수 있는 새로운 기술을 배울 수 있습니다. 반대로 누군가가 당신의 코드를 검토하면서, 더 나은 방법을 제안할 수도 있습니다. 배운 것을 나중에 사용할 수 있다면 엔지니어로서 성장할 것입니다.</p>
+</li>
+<li>
+<p><strong>Micro-level knowledge sharing.</strong> 또는 특정 코드에 익숙한 사람의 수를 늘려 <a href="https://en.wikipedia.org/wiki/Bus_factor">Bus factor</a> , <a href="https://librewiki.net/wiki/%EB%B2%84%EC%8A%A4_%ED%8C%A9%ED%84%B0">버스 팩터</a> 요인을 완화하세요.</p>
+</li>
+<li>
+<p><strong>Direction sharing.</strong> 이와 관련하여, 코드 리뷰는 당신이 진행 중인 작업에 대해 동료와 소통할 기회를 제공하여, 며칠 혹은 몇 주 동안 잘못된 방향으로 가는 일이 없도록 도울 수 있습니다.</p>
+</li>
+<li>
+<p><strong>Communication practice.</strong> 팀 내에서나 외부에서나 명확하게 의사소통할 수 있다는 것은 직장에서 성공하기 위한 가장 중요한 기술 중 하나입니다. 코드 리뷰를 통해 변경 목적을 설명하거나 변경에 대한 의견을 제시함으로써 명료한 글쓰기 연습을 할 수 있습니다. 운이 좋다면, 다음에 “정말 중요한” 것을 써야 할 때를 위한 준비가 될 수 있습니다.</p>
+</li>
+<li>
+<p><strong>Historical record.</strong> 제 경험으로는, 사람들은 누군가 자신의 커밋 메시지를 본다는 것을 알면 훨씬 더 잘 쓰는 경향이 있습니다. 이는 나중에 오래된 변경 사항을 되돌아볼 때 유용합니다.</p>
+</li>
+<li>
+<p><strong>Something to discuss.</strong> 변경 사항에 대한 합의를 할 때, 예를 들어 특정 알고리즘의 구체적인 세부 사항을 구두로 설명하고 동의하는 것은 어려울 수 있습니다. 코드만 가지고는 명확하지 않을 수 있으므로 코드와 함께 의사소통하는 것이 더 정확할 수 있습니다.</p>
+</li>
+<li>
+<p><strong>Team cohesion.</strong> 정기적으로 코드 리뷰를 수행하면, 각자 자기 일만 한다는 느낌이 아니라 팀이 다 같이 함께 일하는 것처럼 느껴집니다.</p>
+</li>
+<li>
+<p><strong>Reading practice.</strong> 다른 사람의 코드를 읽는 연습을 통해 자신의 코드를 좀 더 가독성 있는(그러므로 유지 보수가 용이한) 코드로 만드는 방법을 기억하는 데 도움이 됩니다. 그러면 더 좋은 코드가 오래도록 이어집니다.</p>
+</li>
+</ol>
+<p>저는 이 중에서 가장 가치 있는 것을 선택하라고 한다면 2,5,6번을 선택할 것입니다.</p>
+
+        </div>
+        
+
+
+<div class="article-info">
+    
+        <div class="article-date">2019-01-16</div>
+    
+    <div class="article-taxonomies">
+        
+            
+                <ul class="article-tags">
+                    
+                        <li><a href="https://lovejaco.github.io/tags/%EC%BD%94%EB%93%9C%EB%A6%AC%EB%B7%B0">#코드리뷰</a></li>
+                    
+                </ul>
+        
+    </div>
+</div>
+
+    </article>
+    
+
+
+        </main>
+        <footer>
+            
+                
+                
+
+                <p>© sungyeol.yim, 2020<br>
+Powered by <a target="_blank" href="https://gohugo.io/">Hugo</a>, theme <a target="_blank" href="https://github.com/mitrichius/hugo-theme-anubis">Anubis</a>.
+</p>
+            
+        </footer>
+    </div>
+</body>
+</html>

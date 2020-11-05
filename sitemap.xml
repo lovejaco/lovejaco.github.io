@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+  xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  
+  <url>
+    <loc>https://lovejaco.github.io/posts/instructs-mac-os-gui-apps-about-path-environment-variable/</loc>
+    <lastmod>2020-09-24T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://lovejaco.github.io/posts/path-macos-best-practice-for-path-environment-variables-on-mac-os/</loc>
+    <lastmod>2020-09-24T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://lovejaco.github.io/tags/environment-variable/</loc>
+    <lastmod>2020-09-24T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://lovejaco.github.io/tags/husky/</loc>
+    <lastmod>2020-09-24T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://lovejaco.github.io/tags/macos/</loc>
+    <lastmod>2020-09-24T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://lovejaco.github.io/posts/</loc>
+    <lastmod>2020-09-24T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://lovejaco.github.io/tags/sourcetree/</loc>
+    <lastmod>2020-09-24T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://lovejaco.github.io/posts/sourcetreeosx%EC%97%90%EC%84%9C_huskygit-commit-hook%EA%B0%80_%EB%8F%99%EC%9E%91%ED%95%98%EC%A7%80_%EC%95%8A%EB%8A%94_%EC%9D%B4%EC%9C%A0/</loc>
+    <lastmod>2020-09-24T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://lovejaco.github.io/</loc>
+    <lastmod>2020-09-24T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://lovejaco.github.io/tags/</loc>
+    <lastmod>2020-09-24T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://lovejaco.github.io/posts/i-didnt-want-to-be-a-manager-anymore/</loc>
+    <lastmod>2020-06-07T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://lovejaco.github.io/tags/think/</loc>
+    <lastmod>2020-06-07T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://lovejaco.github.io/posts/two-types-of-hypervisors/</loc>
+    <lastmod>2020-06-05T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://lovejaco.github.io/tags/hypervisor/</loc>
+    <lastmod>2020-06-05T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://lovejaco.github.io/tags/%EA%B0%80%EC%83%81%ED%99%94/</loc>
+    <lastmod>2020-06-05T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://lovejaco.github.io/posts/what-is-ci-cd/</loc>
+    <lastmod>2020-06-04T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://lovejaco.github.io/tags/webrtc/</loc>
+    <lastmod>2020-06-03T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://lovejaco.github.io/posts/webrtc-connectivity-and-nat-traversal/</loc>
+    <lastmod>2020-06-03T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://lovejaco.github.io/about/</loc>
+    <lastmod>2020-05-28T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://lovejaco.github.io/contact/</loc>
+    <lastmod>2020-05-28T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://lovejaco.github.io/tags/hash/</loc>
+    <lastmod>2020-05-27T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://lovejaco.github.io/tags/sha2/</loc>
+    <lastmod>2020-05-27T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://lovejaco.github.io/posts/cryptographic-hash-function/</loc>
+    <lastmod>2020-05-27T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://lovejaco.github.io/tags/tips/</loc>
+    <lastmod>2019-05-13T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://lovejaco.github.io/tags/vscode/</loc>
+    <lastmod>2019-05-13T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://lovejaco.github.io/posts/vscode-command-line-generate-duplicate-icons-in-dock/</loc>
+    <lastmod>2019-05-13T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://lovejaco.github.io/tags/http/</loc>
+    <lastmod>2019-05-06T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://lovejaco.github.io/posts/head-of-line-blocking/</loc>
+    <lastmod>2019-05-06T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://lovejaco.github.io/posts/better-code-review-part-one/</loc>
+    <lastmod>2019-01-21T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://lovejaco.github.io/tags/%EC%BD%94%EB%93%9C%EB%A6%AC%EB%B7%B0/</loc>
+    <lastmod>2019-01-21T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://lovejaco.github.io/posts/microsoft-is-abandoning-sha-1-hashes-for-updates/</loc>
+    <lastmod>2019-01-20T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://lovejaco.github.io/tags/sha1/</loc>
+    <lastmod>2019-01-20T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://lovejaco.github.io/posts/why-review-code/</loc>
+    <lastmod>2019-01-16T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://lovejaco.github.io/posts/a-crash-course-in-just-in-time-compilers/</loc>
+    <lastmod>2019-01-15T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://lovejaco.github.io/tags/%EC%9B%B9%EC%96%B4%EC%85%88%EB%B8%94%EB%A6%AC/</loc>
+    <lastmod>2019-01-15T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://lovejaco.github.io/posts/a-cartoon-intro-to-webassembly/</loc>
+    <lastmod>2019-01-14T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://lovejaco.github.io/categories/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://lovejaco.github.io/tags/ci/cd/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+</urlset>

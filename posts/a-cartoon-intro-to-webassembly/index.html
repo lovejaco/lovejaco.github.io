@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="">
+<head>
+    
+        
+<meta charset="utf-8">
+<meta name="HandheldFriendly" content="True">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="referrer" content="no-referrer-when-downgrade">
+
+<title>[번역] 만화로 소개하는 웹어셈블리  - syyim</title>
+<meta name="description" content="syyim blog">
+
+<link rel="icon" type="image/x-icon" href="https://lovejaco.github.io/favicon.ico">
+<link rel="apple-touch-icon-precomposed" href="https://lovejaco.github.io/favicon.png">
+
+<link rel="stylesheet" href="https://lovejaco.github.io/css/style.css?rnd=1604589944" />
+
+
+
+<meta property="og:title" content="[번역] 만화로 소개하는 웹어셈블리" />
+<meta property="og:description" content="mozilla 시리즈 번역 - A cartoon intro to WebAssembly" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://lovejaco.github.io/posts/a-cartoon-intro-to-webassembly/" />
+<meta property="article:published_time" content="2019-01-14T00:00:00+00:00" />
+<meta property="article:modified_time" content="2019-01-14T00:00:00+00:00" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="[번역] 만화로 소개하는 웹어셈블리"/>
+<meta name="twitter:description" content="mozilla 시리즈 번역 - A cartoon intro to WebAssembly"/>
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-167094170-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+ 
+
+
+
+
+    
+</head>
+<body>
+    <a class="skip-main" href="#main">Skip to main content</a>
+    <div class="container">
+        <header> 
+            
+                <h1 class="site-header">
+    <a href="/">syyim</a>
+</h1>
+<nav>
+    
+    
+    <a class="" href="https://lovejaco.github.io/about/" title="">About</a>
+    
+    <a class="" href="https://lovejaco.github.io/tags/" title="">Tags</a>
+    
+    <a class="" href="https://lovejaco.github.io/posts/" title="">Archive</a>
+    
+    <a class="" href="https://lovejaco.github.io/contact/" title="">Contact</a>
+    
+</nav>
+
+            
+        </header>
+        <main id="main" tabindex="-1"> 
+            
+
+    <article class="post">
+        <header>
+            <h1>[번역] 만화로 소개하는 웹어셈블리</h1>
+        </header>
+        <div class="content">
+            <p>원문: <a href="https://hacks.mozilla.org/2017/02/a-cartoon-intro-to-webassembly/">cartoon intro to WebAssembly</a></p>
+<ul>
+<li>번역기와 함께 주관적인 이해를 바탕으로 작성되어, 오역 가능성이 높습니다. 모든 저작권은 원작자에게 있습니다.</li>
+</ul>
+<p>자바스크립트는 1995년에 만들어졌습니다. 처음 10년 동안은 빠르게 동작하도록 설계되지 않았고, 빠르지도 않았습니다.</p>
+<p>그 이후에 브라우저의 경쟁이 치열해지기 시작했습니다.</p>
+<p>2008년에 브라우저의 성능 전쟁이 시작되면서, 다수의 브라우저에서 JITs라고도 불리는 JIT(실시간 just-in-time) 컴파일러를 도입했습니다. JIT는 자바스크립트가 실행되는 패턴을 관찰하고 그것을 기반으로 코드를 더 빠르게 실행할 수 있었습니다.</p>
+<p>이러한 JIT의 도입은 자바스크립트 성능의 변곡점을 가져왔습니다. 자바스크립트의 실행이 10배 빨라졌습니다.</p>
+<p><img src="https://hacks.mozilla.org/files/2017/02/01-01-perf_graph05-768x628.png" alt=""></p>
+<p>이렇게 성능이 향상되면서, 자바스크립트는 Node.js로 서버 측 프로그래밍을 작성하는 것처럼 아무도 예상하지 못했던 곳에서 사용되기 시작했습니다. 성능 향상은 자바스크립트를 완전히 새로운 종류의 문제에서 사용하는 것을 가능하게 했습니다.</p>
+<p>우리는 지금 웹어셈블리와 함께 그 변곡점 중 어느 다른 한 곳에 있는지도 모릅니다.</p>
+<p><img src="https://hacks.mozilla.org/files/2017/02/01-02-perf_graph10-768x633.png" alt=""></p>
+<p>그럼, 이제 무엇이 웹어셈블리를 빠르게 만드는지 알아보려고 합니다.</p>
+<p><strong>Background:</strong></p>
+<ul>
+<li><a href="https://hacks.mozilla.org/2017/02/a-crash-course-in-just-in-time-jit-compilers/">A crash course in just-in-time (JIT) compilers</a></li>
+<li><a href="https://hacks.mozilla.org/2017/02/a-crash-course-in-assembly/">A crash course in assembly</a></li>
+</ul>
+<p><strong>WebAssembly, the present:</strong></p>
+<ul>
+<li><a href="https://hacks.mozilla.org/2017/02/creating-and-working-with-webassembly-modules/">Creating and working with WebAssembly modules</a></li>
+<li><a href="https://hacks.mozilla.org/2017/02/what-makes-webassembly-fast/">What makes WebAssembly fast?</a></li>
+</ul>
+<p><strong>WebAssembly, the future:</strong></p>
+<ul>
+<li><a href="https://hacks.mozilla.org/?p=30522">Where is WebAssembly now and what’s next</a></li>
+</ul>
+<h3 id="about-lin-clarkhttpstwittercomlinclark">About <a href="https://twitter.com/linclark">Lin Clark</a></h3>
+<p>Lin works in Advanced Development at Mozilla, with a focus on Rust and WebAssembly.</p>
+<ul>
+<li><a href="https://twitter.com/linclark">https://twitter.com/linclark</a></li>
+<li><a href="http://twitter.com/linclark">@linclark</a></li>
+</ul>
+<p><a href="https://hacks.mozilla.org/author/lclarkmozilla-com/">More articles by Lin Clark…</a></p>
+
+        </div>
+        
+
+
+<div class="article-info">
+    
+        <div class="article-date">2019-01-14</div>
+    
+    <div class="article-taxonomies">
+        
+            
+                <ul class="article-tags">
+                    
+                        <li><a href="https://lovejaco.github.io/tags/%EC%9B%B9%EC%96%B4%EC%85%88%EB%B8%94%EB%A6%AC">#웹어셈블리</a></li>
+                    
+                </ul>
+        
+    </div>
+</div>
+
+    </article>
+    
+
+
+        </main>
+        <footer>
+            
+                
+                
+
+                <p>© sungyeol.yim, 2020<br>
+Powered by <a target="_blank" href="https://gohugo.io/">Hugo</a>, theme <a target="_blank" href="https://github.com/mitrichius/hugo-theme-anubis">Anubis</a>.
+</p>
+            
+        </footer>
+    </div>
+</body>
+</html>

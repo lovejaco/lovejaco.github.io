@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="">
+<head>
+    
+        
+<meta charset="utf-8">
+<meta name="HandheldFriendly" content="True">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="referrer" content="no-referrer-when-downgrade">
+
+<title>[번역] PATH (MacOS) : Mac OS에서 PATH 환경 변수 모범 사례   - syyim</title>
+<meta name="description" content="syyim blog">
+
+<link rel="icon" type="image/x-icon" href="https://lovejaco.github.io/favicon.ico">
+<link rel="apple-touch-icon-precomposed" href="https://lovejaco.github.io/favicon.png">
+
+<link rel="stylesheet" href="https://lovejaco.github.io/css/style.css?rnd=1604589944" />
+
+
+
+<meta property="og:title" content="[번역] PATH (MacOS) : Mac OS에서 PATH 환경 변수 모범 사례 " />
+<meta property="og:description" content="[번역] PATH (MacOS) : Best practice for PATH Environment Variables On Mac OS" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://lovejaco.github.io/posts/path-macos-best-practice-for-path-environment-variables-on-mac-os/" />
+<meta property="article:published_time" content="2020-09-24T00:00:00+00:00" />
+<meta property="article:modified_time" content="2020-09-24T00:00:00+00:00" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="[번역] PATH (MacOS) : Mac OS에서 PATH 환경 변수 모범 사례 "/>
+<meta name="twitter:description" content="[번역] PATH (MacOS) : Best practice for PATH Environment Variables On Mac OS"/>
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-167094170-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+ 
+
+
+
+
+    
+</head>
+<body>
+    <a class="skip-main" href="#main">Skip to main content</a>
+    <div class="container">
+        <header> 
+            
+                <h1 class="site-header">
+    <a href="/">syyim</a>
+</h1>
+<nav>
+    
+    
+    <a class="" href="https://lovejaco.github.io/about/" title="">About</a>
+    
+    <a class="" href="https://lovejaco.github.io/tags/" title="">Tags</a>
+    
+    <a class="" href="https://lovejaco.github.io/posts/" title="">Archive</a>
+    
+    <a class="" href="https://lovejaco.github.io/contact/" title="">Contact</a>
+    
+</nav>
+
+            
+        </header>
+        <main id="main" tabindex="-1"> 
+            
+
+    <article class="post">
+        <header>
+            <h1>[번역] PATH (MacOS) : Mac OS에서 PATH 환경 변수 모범 사례 </h1>
+        </header>
+        <div class="content">
+            <p>원문 링크: <a href="https://medium.com/@imstudio/path-macos-best-practice-for-path-environment-variables-on-mac-os-35ec4076a486">PATH (MacOS) : Best practice for PATH Environment Variables On Mac OS</a></p>
+<blockquote>
+<p>Mac이 훌륭한 OS라는 것을 잘 아시겠지만, MacOS를 사용하다 보면 PATH 환경을 편집하는 방법을 알아야 할 필요가 있습니다. 다행히도 이 작업을 처리하는 것은 쉽습니다.</p>
+</blockquote>
+<h2 id="1-환경-변수">1. 환경 변수</h2>
+<p>환경 변수는 윈도, 맥 OS, 리눅스와 같은 운영체제(Operating System)에서 실행되는 모든 프로세스/사용자가 접근할 수 있는 전역 시스템 변수입니다. 환경 변수는 시스템 전체 값을 저장하는 데 유용합니다.</p>
+<ul>
+<li><strong>PATH:</strong> 가장 자주 사용되는 환경 변수로, 실행 가능한 프로그램을 검색하기 위한 디렉토리 목록을 저장합니다.</li>
+<li><strong>OS:</strong> 운영 체제.</li>
+<li><strong>COMPUTENAME, USERNAME:</strong> 컴퓨터와 현재 사용자 이름을 저장합니다.</li>
+<li><strong>SystemRoot:</strong> 시스템 루트 디렉토리.</li>
+<li><strong>(Windows) HOMEDRIVE, HOMEPATH:</strong> 현재 사용자의 홈 디렉토리.</li>
+</ul>
+<h2 id="2-macoslinux-환경-변수">2. (macOS/Linux) 환경 변수</h2>
+<p>macOS/Unix의 환경 변수는 대소 문자를 구분합니다. 전역 환경 변수(모든 프로세스에서 사용 가능)의 이름은 대문자로, 단어는 밑줄 (_)로 연결됩니다. (예 : JAVA_HOME)</p>
+<p>지역 변수(현재 프로세스에서만 사용 가능)는 소문자입니다. 권장되는 방법은 <code>.bash_profile</code> 파일을 편집하는 것입니다. 이 파일은 시스템에 로그인할 때마다 Bash가 읽고 그 안의 명령을 실행합니다. 가장 좋은 점은 이 파일은 사용자 전용이기 때문에 같은 시스템의 다른 사용자에게 영향을 주지 않는다는 것입니다.</p>
+<h3 id="21--bash-셸에서-환경-변수-사용">2.1 — Bash 셸에서 환경 변수 사용</h3>
+<p>대부분의 유닉스(Ubuntu/macOS)는 소위 Bash 셸을 사용합니다.</p>
+<ul>
+<li>모든 환경 변수를 나열하려면 &ldquo;env&rdquo;(또는 &ldquo;printenv&rdquo;) 명령을 사용하고 &ldquo;set&quot;을 사용하여 모든 로컬 변수를 포함한 모든 변수를 나열할 수 있습니다.</li>
+<li>변수를 참조하려면 접두사 &lsquo;$&lsquo;와 함께 <code>$varname</code>을 사용합니다 (Windows에서는 %varname% 사용).</li>
+<li>특정 변수의 값을 출력하려면 <code>echo $varname</code> 명령을 사용하세요.</li>
+<li>환경 변수를 설정하려면 변수를 설정하고 전역 환경으로 내보내는 <code>export varname=value</code> 명령을 사용합니다 (다른 프로세스에서 사용 가능). 값에 공백이 포함된 경우 값을 큰따옴표로 묶습니다.</li>
+<li>로컬(지역) 변수를 설정하려면 <code>varname=value</code> (또는 <code>set varname=value</code>) 명령을 사용합니다. 로컬 변수는 이 프로세스 내에서만 사용할 수 있습니다.</li>
+<li>로컬(지역) 변수를 해제하려면 <code>varname=</code> 명령을 사용합니다. 즉, 빈 문자열로 설정 (또는 <code>unset varname</code>)합니다.</li>
+</ul>
+<h3 id="22--bash-셸에서-영속적으로-환경-변수를-설정하는-방법">2.2 — Bash 셸에서 영속적으로 환경 변수를 설정하는 방법</h3>
+<p>홈 디렉토리의 Bash Shell 시작 스크립트 <code>~/.bashrc</code> (또는 &ldquo;~/.bash_profile&rdquo; 또는 &ldquo;~/.profile&rdquo;)에 <code>export</code> 명령을 배치하거나 시스템-수준의 작업을 위해 <code>/etc/profile</code>을 배치하여 환경 변수를 영속적으로 설정할 수 있습니다.</p>
+<blockquote>
+<p>점 (.) 포함된 파일이나 디렉토리는 기본적으로 숨겨져 있습니다. 숨겨진 파일을 표시하려면 &ldquo;ls -a&quot;또는 &ldquo;ls -al&quot;명령을 사용하세요. 맥 파인더에서 단축키는 (Shift + Command + .)</p>
+</blockquote>
+<p>예를 들어 PATH 환경 변수에 디렉토리를 추가하려면 &ldquo;~/.bashrc&rdquo; (또는 &ldquo;~/.bash_profile&rdquo; 또는 &ldquo;~/.profile&rdquo;) 끝에 다음 줄을 추가합니다. 여기서 ~(물결 표시는) 현재 사용자의 홈 디렉토리를 의미합니다. 모든 사용자의 경우에는 &ldquo;/etc/profile”</p>
+<p><strong>1 단계 :</strong> 터미널 창 열기
+<strong>2 단계 :</strong> 다음 명령을 입력합니다.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">touch ~/.bash_profile; open ~/.bash_profile
+</code></pre></div><p>이 파일을 통해 실행 중인 환경을 사용자 정의할 수 있습니다.</p>
+<blockquote>
+<p>Java의 경우) 다음 행을 추가하여 CLASSPATH 환경 변수를 설정할 수 있습니다. 예를 들면<br>
+export CLASSPATH =. : /usr/local/tomcat/lib/servlet-api.jar<br>
+Bash 셸은 콜론 (:)을 경로 구분자로 사용합니다. windows는 세미콜론 (;)을 사용합니다.</p>
+</blockquote>
+<p><strong>3 단계 :</strong> PATH에 추가 하고 싶은 디렉토리를 경로를 추가하세요. 예를 들면 다음과 같습니다.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">export IM_STUDIO_PATH<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span>$HOME<span style="color:#e6db74">/.imstudio/bin:</span>$PATH<span style="color:#e6db74">&#34;</span>
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">// Append a directory in front of the existing PATH
+export PATH<span style="color:#f92672">=</span>/usr/local/mysql/bin:$PATH
+</code></pre></div><p>이 예제는 <code>~/.imstudio</code> 경로를 PATH에 추가합니다. $PATH 부분은 기존 PATH를 추가하여 새 값으로 유지하므로 매우  중요합니다.</p>
+<p><strong>4 단계 :</strong> .bash_profile 파일을 저장하고 텍스트 편집을 종료합니다 (Command + Q).</p>
+<blockquote>
+<p>“: wq! nano 편집기를 사용하는 경우”</p>
+</blockquote>
+<p><strong>5 단계 :</strong> .bash_profile을 강제 실행합니다. 이렇게하면 재부팅하지 않고 즉시 값을 로드합니다. 터미널 창에서 다음 명령을 실행하십시오.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">source ~/.bashrc
+// or
+source ~/.bash_profile
+source ~/.profile
+source /etc/profile
+</code></pre></div><p>이제 Mac OS X 컴퓨터 시스템에서 PATH를 편집하는 방법을 알았습니다. 새 터미널 창을 열고 다음을 실행하여 새 경로를 확인할 수 있습니다.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">echo $PATH
+</code></pre></div><p>이제 PATH에서 원하는 값을 볼 수 있습니다.</p>
+<p><strong>6 단계 :</strong> 마지막으로 PATH에 문제가 있고 잘못된 경로를 &ldquo;다시 실행&quot;하거나 &ldquo;제거&quot;하려는 경우 다음과 같이 생각할 수 있습니다.</p>
+<p><code>launchctl unsetenv IM_STUDIO_PATH</code></p>
+<h2 id="3-beautiful-tips">3. Beautiful Tips</h2>
+<h3 id="31---현재-환경-변수-설정을-확인합니다">3.1 - 현재 환경 변수 설정을 확인합니다.</h3>
+<p>터미널에서 &ldquo;printenv&rdquo; 입력</p>
+<p><img src="https://miro.medium.com/max/1400/1*XmziTfiFd5oYuHTjGzFg1g.png" alt=""></p>
+<h3 id="32--예제">3.2- 예제</h3>
+<p>export JAVA_HOME = $ (/usr/libexec/java_home)
+export JRE_HOME = $ (/usr/libexec/java_home)</p>
+<h3 id="33--linux--macos-bash-shell에서-java_home을-설정하는-방법">3.3 — Linux / macOS (Bash Shell)에서 JAVA_HOME을 설정하는 방법</h3>
+<p>먼저 터미널을 시작하고 다음을 실행하여 JAVA_HOME이 이미 설정되어 있는지 확인하십시오.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">echo $ JAVA_HOME
+</code></pre></div><p><code>JAVA_HOME</code> 은 JDK가 설치된 디렉토리로 설정됩니다. JDK가 설치된 디렉토리를 찾아야합니다.</p>
+<blockquote>
+<p>/Library/Java/JavaVirtualMachines/…</p>
+</blockquote>
+<p>“~/.bashrc” 끝에 다음 행을 추가하십시오.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">export JAVA_HOME<span style="color:#f92672">=</span>/path/to/JDK-installed-directory
+</code></pre></div><p>새 설정을 적용하려면 bash 셸을 새로 고쳐야합니다. 다음과 같이 &ldquo;source&quot;명령을 실행하십시오.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">// Bash 셸 새로 고침
+source ~/.bashrc   // or <span style="color:#e6db74">&#34;source ~/.login&#34;</span>
+// 새 설정 확인
+echo $JAVA_HOME
+</code></pre></div><p>Thank for your watching. Please feel free to feedback for me.</p>
+<ul>
+<li><a href="https://hathaway.cc/2008/06/how-to-edit-your-path-environment-variables-on-mac/">https://hathaway.cc/2008/06/how-to-edit-your-path-environment-variables-on-mac/</a></li>
+<li><a href="https://osxdaily.com/2015/07/28/set-enviornment-variables-mac-os-x/">https://osxdaily.com/2015/07/28/set-enviornment-variables-mac-os-x/</a></li>
+<li><a href="https://www3.ntu.edu.sg/home/ehchua/programming/howto/Environment_Variables.html">https://www3.ntu.edu.sg/home/ehchua/programming/howto/Environment_Variables.html</a></li>
+</ul>
+
+        </div>
+        
+
+
+<div class="article-info">
+    
+        <div class="article-date">2020-09-24</div>
+    
+    <div class="article-taxonomies">
+        
+            
+                <ul class="article-tags">
+                    
+                        <li><a href="https://lovejaco.github.io/tags/macos">#macOS</a></li>
+                    
+                        <li><a href="https://lovejaco.github.io/tags/environment-variable">#environment variable</a></li>
+                    
+                </ul>
+        
+    </div>
+</div>
+
+    </article>
+    
+
+
+        </main>
+        <footer>
+            
+                
+                
+
+                <p>© sungyeol.yim, 2020<br>
+Powered by <a target="_blank" href="https://gohugo.io/">Hugo</a>, theme <a target="_blank" href="https://github.com/mitrichius/hugo-theme-anubis">Anubis</a>.
+</p>
+            
+        </footer>
+    </div>
+</body>
+</html>
