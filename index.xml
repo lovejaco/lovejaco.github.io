@@ -28,12 +28,12 @@
 &lt;p&gt;완전한 &lt;code&gt;PATH&lt;/code&gt;를 알고 있는 셸에서 부터 앱을 시작 해야 한다는 것은 말이 되지 않습니다.&lt;/p&gt;
 &lt;p&gt;이 발견 덕분에 확신을 가지고 GUI 앱이 어디에서 경로를 얻는지 이해하기 위해 조사했고 약간 깊이 파고들어간 후에 답을 얻었습니다. 아이콘을 클릭하거나 Spotlight를 통해 시작되는 모든 단일 앱은 launchd 데몬에 의해 설정된 무언가에서 PATH를 가져옵니다.&lt;/p&gt;
 &lt;p&gt;이제 GUI 앱에서 사용자 정의 한 PATH를 상속받게 하기 위해 다음과 같이 간단하게 /etc/launchd.conf를 변경하면 됩니다.&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;setenv PATH /usr/local/bin:/usr/local/sbin:/usr/bin:/bin:/usr/sbin:/sbin
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;setenv PATH /usr/local/bin:/usr/local/sbin:/usr/bin:/bin:/usr/sbin:/sbin
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;이제 /usr/bin 및 /usr/sbin에서만 바이너리를 검색하는 대신 GUI 앱은 다음 모든 경로에서 바이너리를 검색합니다. /usr/ local/bin/usr/local/sbin/usr/bin/bin/usr/sbin/sbin.&lt;/p&gt;
 &lt;p&gt;컴퓨터를 재부팅하지 않고 변경 사항을 적용하려면 몇 가지 단계를 더 따라야 합니다.  - 저는 컴퓨터를 재부팅하는 것을 싫어합니다. 이 단계를 통해 launchd 및 spotlight가 새로운 설정을 인식하도록 합니다.&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;$ egrep &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;^setenv\ &amp;#34;&lt;/span&gt; /etc/launchd.conf | xargs -t -L &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt; launchctl
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;$ egrep &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;^setenv\ &amp;#34;&lt;/span&gt; /etc/launchd.conf | xargs -t -L &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt; launchctl
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;이렇게 하면 모든 환경 관련 설정을 launchd로 전달합니다. 그런 다음 Dock 및 Spotlight 앱을 다시 시작해야합니다.&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;$ killall Dock
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;$ killall Dock
 $ killall Spotlight
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;이제 시작하는 모든 GUI 앱은 응용 프로그램 폴더의 아이콘을 클릭하거나 Spotlight를 사용하여 앱을 시작하여도 이 PATH 환경 변수를 상속받습니다.&lt;/p&gt;
 &lt;p&gt;Enjoy!&lt;/p&gt;
@@ -80,7 +80,7 @@ $ killall Spotlight
 &lt;p&gt;예를 들어 PATH 환경 변수에 디렉토리를 추가하려면 &amp;ldquo;~/.bashrc&amp;rdquo; (또는 &amp;ldquo;~/.bash_profile&amp;rdquo; 또는 &amp;ldquo;~/.profile&amp;rdquo;) 끝에 다음 줄을 추가합니다. 여기서 ~(물결 표시는) 현재 사용자의 홈 디렉토리를 의미합니다. 모든 사용자의 경우에는 &amp;ldquo;/etc/profile”&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;1 단계 :&lt;/strong&gt; 터미널 창 열기
 &lt;strong&gt;2 단계 :&lt;/strong&gt; 다음 명령을 입력합니다.&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;touch ~/.bash_profile; open ~/.bash_profile
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;touch ~/.bash_profile; open ~/.bash_profile
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;이 파일을 통해 실행 중인 환경을 사용자 정의할 수 있습니다.&lt;/p&gt;
 &lt;blockquote&gt;
 &lt;p&gt;Java의 경우) 다음 행을 추가하여 CLASSPATH 환경 변수를 설정할 수 있습니다. 예를 들면&lt;br&gt;
@@ -88,8 +88,8 @@ export CLASSPATH =. : /usr/local/tomcat/lib/servlet-api.jar&lt;br&gt;
 Bash 셸은 콜론 (:)을 경로 구분자로 사용합니다. windows는 세미콜론 (;)을 사용합니다.&lt;/p&gt;
 &lt;/blockquote&gt;
 &lt;p&gt;&lt;strong&gt;3 단계 :&lt;/strong&gt; PATH에 추가 하고 싶은 디렉토리를 경로를 추가하세요. 예를 들면 다음과 같습니다.&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;export IM_STUDIO_PATH&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt;$HOME&lt;span style=&#34;color:#e6db74&#34;&gt;/.imstudio/bin:&lt;/span&gt;$PATH&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;// Append a directory in front of the existing PATH
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;export IM_STUDIO_PATH&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt;$HOME&lt;span style=&#34;color:#e6db74&#34;&gt;/.imstudio/bin:&lt;/span&gt;$PATH&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;// Append a directory in front of the existing PATH
 export PATH&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;/usr/local/mysql/bin:$PATH
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;이 예제는 &lt;code&gt;~/.imstudio&lt;/code&gt; 경로를 PATH에 추가합니다. $PATH 부분은 기존 PATH를 추가하여 새 값으로 유지하므로 매우  중요합니다.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;4 단계 :&lt;/strong&gt; .bash_profile 파일을 저장하고 텍스트 편집을 종료합니다 (Command + Q).&lt;/p&gt;
@@ -97,13 +97,13 @@ export PATH&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;/usr/local/my
 &lt;p&gt;“: wq! nano 편집기를 사용하는 경우”&lt;/p&gt;
 &lt;/blockquote&gt;
 &lt;p&gt;&lt;strong&gt;5 단계 :&lt;/strong&gt; .bash_profile을 강제 실행합니다. 이렇게하면 재부팅하지 않고 즉시 값을 로드합니다. 터미널 창에서 다음 명령을 실행하십시오.&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;source ~/.bashrc
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;source ~/.bashrc
 // or
 source ~/.bash_profile
 source ~/.profile
 source /etc/profile
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;이제 Mac OS X 컴퓨터 시스템에서 PATH를 편집하는 방법을 알았습니다. 새 터미널 창을 열고 다음을 실행하여 새 경로를 확인할 수 있습니다.&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;echo $PATH
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;echo $PATH
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;이제 PATH에서 원하는 값을 볼 수 있습니다.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;6 단계 :&lt;/strong&gt; 마지막으로 PATH에 문제가 있고 잘못된 경로를 &amp;ldquo;다시 실행&amp;quot;하거나 &amp;ldquo;제거&amp;quot;하려는 경우 다음과 같이 생각할 수 있습니다.&lt;/p&gt;
 &lt;p&gt;&lt;code&gt;launchctl unsetenv IM_STUDIO_PATH&lt;/code&gt;&lt;/p&gt;
@@ -116,15 +116,15 @@ source /etc/profile
 export JRE_HOME = $ (/usr/libexec/java_home)&lt;/p&gt;
 &lt;h3 id=&#34;33--linux--macos-bash-shell에서-java_home을-설정하는-방법&#34;&gt;3.3 — Linux / macOS (Bash Shell)에서 JAVA_HOME을 설정하는 방법&lt;/h3&gt;
 &lt;p&gt;먼저 터미널을 시작하고 다음을 실행하여 JAVA_HOME이 이미 설정되어 있는지 확인하십시오.&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;echo $ JAVA_HOME
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;echo $ JAVA_HOME
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;code&gt;JAVA_HOME&lt;/code&gt; 은 JDK가 설치된 디렉토리로 설정됩니다. JDK가 설치된 디렉토리를 찾아야합니다.&lt;/p&gt;
 &lt;blockquote&gt;
 &lt;p&gt;/Library/Java/JavaVirtualMachines/…&lt;/p&gt;
 &lt;/blockquote&gt;
 &lt;p&gt;“~/.bashrc” 끝에 다음 행을 추가하십시오.&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;export JAVA_HOME&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;/path/to/JDK-installed-directory
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;export JAVA_HOME&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;/path/to/JDK-installed-directory
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;새 설정을 적용하려면 bash 셸을 새로 고쳐야합니다. 다음과 같이 &amp;ldquo;source&amp;quot;명령을 실행하십시오.&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;// Bash 셸 새로 고침
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;// Bash 셸 새로 고침
 source ~/.bashrc   // or &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;source ~/.login&amp;#34;&lt;/span&gt;
 // 새 설정 확인
 echo $JAVA_HOME
@@ -148,7 +148,7 @@ echo $JAVA_HOME
 &lt;p&gt;최근 합류한 프로젝트에서는 &lt;a href=&#34;https://www.npmjs.com/package/husky&#34;&gt;Husky&lt;/a&gt;를 도입하여 git-commit-hook에서 노드 버전을 고정하거나, Lint와 같은 여러 사전 작업을 수행하고 검사합니다.&lt;/p&gt;
 &lt;p&gt;저는 주로 터미널을 이용하여 Git 커맨드를 수행하지만 가끔씩 Sourcetre를 사용하기도 하는데 터미널에서 커밋을 작성하면 잘 동작하지만, Sourcetree에서는 hook이 실패하는 현상이 발생하였습니다.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Sourcetree &amp;gt; View &amp;gt; Show Command History&lt;/strong&gt;&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;.huskyrc: line 9: nvm: command not found
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;.huskyrc: line 9: nvm: command not found
 env: node: No such file or directory
 Can&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;t find Husky, skipping pre-commit hook
 &lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;You can reinstall it using &amp;#39;&lt;/span&gt;npm install husky --save-dev&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;&amp;#39;&lt;/span&gt; or delete this hook
@@ -170,7 +170,7 @@ Completed successfully
 &lt;p&gt;GUI 클라이언트와 함께 nvm을 사용하는 경우에는 PATH가 달라서 nvm을 로드하지 않을 수 있습니다. 이 경우 일반적으로 nvm에 의해 설치된 가장 높은 노드 버전이 선택됩니다. 또한 ~/.node_path를 확인하여 GUI에서 사용하는 버전을 확인하거나 다른 것을 사용하려는 경우 편집할 수도 있습니다.&lt;/p&gt;
 &lt;/blockquote&gt;
 &lt;p&gt;그러니까 macOS에서 GUI 클라이언트를 사용하면 일반적으로 .bashrc 또는.zshrc로 설정한 사용자 지정 환경 변수들을 인식하지 않기 때문에 Shell의 환경과 다를 수 있습니다&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;Can&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;&amp;#39;&lt;/span&gt;t find yarn in PATH: /Applications/Xcode.app/Contents/Developer/usr/libexec/git-core:/Applications/Sourcetree.app/Contents/Resources/bin:/usr/bin:/Applications/Sourcetree.app/Contents/Resources/git_local/gitflow:/Applications/Sourcetree.app/Contents/Resources/git_local/git-lfs:/usr/bin:/bin:/usr/sbin:/sbin
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;Can&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;&amp;#39;&lt;/span&gt;t find yarn in PATH: /Applications/Xcode.app/Contents/Developer/usr/libexec/git-core:/Applications/Sourcetree.app/Contents/Resources/bin:/usr/bin:/Applications/Sourcetree.app/Contents/Resources/git_local/gitflow:/Applications/Sourcetree.app/Contents/Resources/git_local/git-lfs:/usr/bin:/bin:/usr/sbin:/sbin
 Skipping pre-commit hook
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;code&gt;.huskyrc&lt;/code&gt;  파일을 삭제하고 테스트를 진행하면 역시나 PATH를 찾지 못하는 것을 확인할 수 있음.&lt;/p&gt;
 &lt;p&gt;Husky를 사용 중이며 Sourcetree에서 nvm을 로드할 수 있도록 조치해야 한다면 가장 보편적으로 수행하는 방법은 &lt;code&gt;.huskyrc&lt;/code&gt; 에서 PATH 환경 변수를 설정해야 합니다.-  &lt;a href=&#34;https://github.com/typicode/husky/issues/390#issuecomment-545855628&#34;&gt;참고&lt;/a&gt;&lt;/p&gt;
@@ -560,7 +560,7 @@ relay candidate는 server reflexive candidate( &amp;ldquo;srflx&amp;rdquo;)처�
 &lt;h2 id=&#34;webrtc-call-flow-호출-흐름---api&#34;&gt;WebRTC Call Flow (호출 흐름) - API&lt;/h2&gt;
 &lt;p&gt;이제 WebRTC 의 연결 흐름에 대해 알아 보겠습니다.&lt;/p&gt;
 &lt;h3 id=&#34;signalling&#34;&gt;Signalling&lt;/h3&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-js&#34; data-lang=&#34;js&#34;&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;const&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;configs&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; {
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-js&#34; data-lang=&#34;js&#34;&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;const&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;configs&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; {
   &lt;span style=&#34;color:#a6e22e&#34;&gt;iceServers&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; [
     {
       &lt;span style=&#34;color:#a6e22e&#34;&gt;urls&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;stun:stun.l.google.com:19302&amp;#34;&lt;/span&gt;,
@@ -593,12 +593,12 @@ relay candidate는 server reflexive candidate( &amp;ldquo;srflx&amp;rdquo;)처�
 &lt;p&gt;&lt;img src=&#34;https://hpbn.co/assets/diagrams/69aa329ffbfae6fd0446de77623c93fb.svg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
 &lt;h4 id=&#34;offer-sdp&#34;&gt;Offer SDP&lt;/h4&gt;
 &lt;p&gt;&lt;img src=&#34;https://lh4.googleusercontent.com/5MUbymu8G_iRPSn_ks-eLO8OH7DP6NW_rXMtp9BgWY29T4LZi-JVq2YOXuWey5lmEuCqihms-xzEi2RFUb1SblhtyxbhSyA7cOaAIwrrnolDBpTcQatVPGNBPIjEZr0XtFLXrISdQNc&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-js&#34; data-lang=&#34;js&#34;&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;myPeerConnection&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;createOffer&lt;/span&gt;().&lt;span style=&#34;color:#a6e22e&#34;&gt;then&lt;/span&gt;(&lt;span style=&#34;color:#66d9ef&#34;&gt;function&lt;/span&gt; (&lt;span style=&#34;color:#a6e22e&#34;&gt;offer&lt;/span&gt;) {
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-js&#34; data-lang=&#34;js&#34;&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;myPeerConnection&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;createOffer&lt;/span&gt;().&lt;span style=&#34;color:#a6e22e&#34;&gt;then&lt;/span&gt;(&lt;span style=&#34;color:#66d9ef&#34;&gt;function&lt;/span&gt; (&lt;span style=&#34;color:#a6e22e&#34;&gt;offer&lt;/span&gt;) {
   &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;myPeerConnection&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;setLocalDescription&lt;/span&gt;(&lt;span style=&#34;color:#66d9ef&#34;&gt;new&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;RTCSessionDescription&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;offer&lt;/span&gt;));
 });
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h4 id=&#34;answer-sdp&#34;&gt;Answer SDP&lt;/h4&gt;
 &lt;p&gt;&lt;img src=&#34;https://lh6.googleusercontent.com/xQc7L7-RTOyNkVTIIjwR6fF_iPziPsyw9Fx3l_GGmN8rlh4l-11ylMHo-X0jg4b0L2k0R_cL9-HoKRGveaoq-v4HegwWqyB8jR5qpNB2Fl1m8MUXZXZmBzzZIgbK9oytd-BBUvgfatg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-js&#34; data-lang=&#34;js&#34;&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;myPeerConnection&lt;/span&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-js&#34; data-lang=&#34;js&#34;&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;myPeerConnection&lt;/span&gt;
   .&lt;span style=&#34;color:#a6e22e&#34;&gt;setRemoteDescription&lt;/span&gt;(&lt;span style=&#34;color:#66d9ef&#34;&gt;new&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;RTCSessionDescription&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;description&lt;/span&gt;))
   .&lt;span style=&#34;color:#a6e22e&#34;&gt;then&lt;/span&gt;(&lt;span style=&#34;color:#66d9ef&#34;&gt;function&lt;/span&gt; () {
     &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;createMyStream&lt;/span&gt;();
@@ -621,7 +621,7 @@ relay candidate는 server reflexive candidate( &amp;ldquo;srflx&amp;rdquo;)처�
 &lt;p&gt;대화식 연결 설정&lt;/p&gt;
 &lt;h4 id=&#34;ice-gathering&#34;&gt;Ice gathering&lt;/h4&gt;
 &lt;p&gt;setLocalDescription 호출이 완료되면 피어는 자신의 ice 후보를 수집합니다.&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-js&#34; data-lang=&#34;js&#34;&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;pc&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;onicecandidate&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;function&lt;/span&gt; (&lt;span style=&#34;color:#a6e22e&#34;&gt;event&lt;/span&gt;) {
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-js&#34; data-lang=&#34;js&#34;&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;pc&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;onicecandidate&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;function&lt;/span&gt; (&lt;span style=&#34;color:#a6e22e&#34;&gt;event&lt;/span&gt;) {
   &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; (&lt;span style=&#34;color:#a6e22e&#34;&gt;event&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;candidate&lt;/span&gt;) {
     &lt;span style=&#34;color:#75715e&#34;&gt;// event.candidate가 존재하면 원격 유저에게 candidate를 전달합니다.
 &lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;&lt;/span&gt;  } &lt;span style=&#34;color:#66d9ef&#34;&gt;else&lt;/span&gt; {
@@ -642,7 +642,7 @@ ICE 후보가 SDP 제안/응답에 포함될 수 있습니다. 이렇게 하려�
 &lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;Trickle ICE는 시그널 채널을 통해 더 많은 트래픽을 생성하지만 p2p 연결을 시작하는데 필요한 시간이 크게 향상 될 수 있습니다.&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-js&#34; data-lang=&#34;js&#34;&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;signalingChannel&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;onmessage&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; (&lt;span style=&#34;color:#a6e22e&#34;&gt;receivedString&lt;/span&gt;) =&amp;gt; {
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-js&#34; data-lang=&#34;js&#34;&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;signalingChannel&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;onmessage&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; (&lt;span style=&#34;color:#a6e22e&#34;&gt;receivedString&lt;/span&gt;) =&amp;gt; {
   &lt;span style=&#34;color:#66d9ef&#34;&gt;const&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;message&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;JSON&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;parse&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;receivedString&lt;/span&gt;);
   &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; (&lt;span style=&#34;color:#a6e22e&#34;&gt;message&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;ice&lt;/span&gt;) {
     &lt;span style=&#34;color:#a6e22e&#34;&gt;pc&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;addIceCandidate&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;message&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;ice&lt;/span&gt;).&lt;span style=&#34;color:#66d9ef&#34;&gt;catch&lt;/span&gt;((&lt;span style=&#34;color:#a6e22e&#34;&gt;e&lt;/span&gt;) =&amp;gt; {
@@ -989,7 +989,7 @@ SHA-256은 채굴자가 이전 블록 해시 매개 변수를 알아내기 위�
       <description>&lt;p&gt;먼저, 이 증상은 macOS Mojave(그 이상)에서 나타나는 현상입니다.&lt;/p&gt;
 &lt;h3 id=&#34;커맨드라인-명령으로-code-실행&#34;&gt;커맨드라인 명령으로 code 실행&lt;/h3&gt;
 &lt;p&gt;쉘의 환경 설정에 path를 지정하고, 확인합니다.&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&amp;gt; nano ~/.zshrc
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&amp;gt; nano ~/.zshrc
 export PATH&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;/Applications/Visual&lt;span style=&#34;color:#ae81ff&#34;&gt;\\&lt;/span&gt; Studio&lt;span style=&#34;color:#ae81ff&#34;&gt;\\&lt;/span&gt; Code.app/Contents/Resources/app/bin:$PATH
 
 &amp;gt; which code
@@ -1013,7 +1013,7 @@ export PATH&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;/Applications
 &lt;h4 id=&#34;2-define-shell-function&#34;&gt;2. Define Shell function&lt;/h4&gt;
 &lt;p&gt;.bashrc 또는 .zshrc 같은 shell의 환결 설정에 함수를 지정하는 방법이 있습니다.
 저는 다음의 조치를 따랐습니다.&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&amp;gt; nano ~/.zshrc
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&amp;gt; nano ~/.zshrc
 code&lt;span style=&#34;color:#f92672&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;{&lt;/span&gt;
     &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;[&lt;/span&gt; -t &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;]&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;[&lt;/span&gt; -t &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;]&lt;/span&gt;; &lt;span style=&#34;color:#66d9ef&#34;&gt;then&lt;/span&gt;
         open -a Visual&lt;span style=&#34;color:#ae81ff&#34;&gt;\\&lt;/span&gt; Studio&lt;span style=&#34;color:#ae81ff&#34;&gt;\\&lt;/span&gt; Code.app &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt;$@&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt;
@@ -1224,7 +1224,7 @@ HTTP2는 다음의 방법으로 이 문제를 해결합니다.&lt;/p&gt;
 &lt;p&gt;많은 종류의 최적화 방법이 있지만 그중 한가지 유형을 살펴보면 최적화를 수행하는 방식에 대한 느낌을 얻을 수 있습니다. 컴파일러를 최적화하는 방법 중 가장 많이 알려진 방식은 타입 특수화(type specialization)에서 유래된 방식입니다.&lt;/p&gt;
 &lt;p&gt;자바스크립트와 같은 동적 타입 시스템의 런타임은 약간의 추가 작업을 필요로 합니다.
 예를 들어, 다음의 코드를 살펴보세요.&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-js&#34; data-lang=&#34;js&#34;&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;function&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;arraySum&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;arr&lt;/span&gt;) {
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-js&#34; data-lang=&#34;js&#34;&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;function&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;arraySum&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;arr&lt;/span&gt;) {
   &lt;span style=&#34;color:#66d9ef&#34;&gt;var&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;sum&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;;
   &lt;span style=&#34;color:#66d9ef&#34;&gt;for&lt;/span&gt; (&lt;span style=&#34;color:#66d9ef&#34;&gt;var&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;i&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;; &lt;span style=&#34;color:#a6e22e&#34;&gt;i&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;&amp;lt;&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;arr&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;length&lt;/span&gt;; &lt;span style=&#34;color:#a6e22e&#34;&gt;i&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;++&lt;/span&gt;) {
     &lt;span style=&#34;color:#a6e22e&#34;&gt;sum&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;+=&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;arr&lt;/span&gt;[&lt;span style=&#34;color:#a6e22e&#34;&gt;i&lt;/span&gt;];

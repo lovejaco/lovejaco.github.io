@@ -21,7 +21,7 @@
 &lt;p&gt;최근 합류한 프로젝트에서는 &lt;a href=&#34;https://www.npmjs.com/package/husky&#34;&gt;Husky&lt;/a&gt;를 도입하여 git-commit-hook에서 노드 버전을 고정하거나, Lint와 같은 여러 사전 작업을 수행하고 검사합니다.&lt;/p&gt;
 &lt;p&gt;저는 주로 터미널을 이용하여 Git 커맨드를 수행하지만 가끔씩 Sourcetre를 사용하기도 하는데 터미널에서 커밋을 작성하면 잘 동작하지만, Sourcetree에서는 hook이 실패하는 현상이 발생하였습니다.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Sourcetree &amp;gt; View &amp;gt; Show Command History&lt;/strong&gt;&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;.huskyrc: line 9: nvm: command not found
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;.huskyrc: line 9: nvm: command not found
 env: node: No such file or directory
 Can&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;t find Husky, skipping pre-commit hook
 &lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;You can reinstall it using &amp;#39;&lt;/span&gt;npm install husky --save-dev&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;&amp;#39;&lt;/span&gt; or delete this hook
@@ -43,7 +43,7 @@ Completed successfully
 &lt;p&gt;GUI 클라이언트와 함께 nvm을 사용하는 경우에는 PATH가 달라서 nvm을 로드하지 않을 수 있습니다. 이 경우 일반적으로 nvm에 의해 설치된 가장 높은 노드 버전이 선택됩니다. 또한 ~/.node_path를 확인하여 GUI에서 사용하는 버전을 확인하거나 다른 것을 사용하려는 경우 편집할 수도 있습니다.&lt;/p&gt;
 &lt;/blockquote&gt;
 &lt;p&gt;그러니까 macOS에서 GUI 클라이언트를 사용하면 일반적으로 .bashrc 또는.zshrc로 설정한 사용자 지정 환경 변수들을 인식하지 않기 때문에 Shell의 환경과 다를 수 있습니다&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;Can&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;&amp;#39;&lt;/span&gt;t find yarn in PATH: /Applications/Xcode.app/Contents/Developer/usr/libexec/git-core:/Applications/Sourcetree.app/Contents/Resources/bin:/usr/bin:/Applications/Sourcetree.app/Contents/Resources/git_local/gitflow:/Applications/Sourcetree.app/Contents/Resources/git_local/git-lfs:/usr/bin:/bin:/usr/sbin:/sbin
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;Can&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;&amp;#39;&lt;/span&gt;t find yarn in PATH: /Applications/Xcode.app/Contents/Developer/usr/libexec/git-core:/Applications/Sourcetree.app/Contents/Resources/bin:/usr/bin:/Applications/Sourcetree.app/Contents/Resources/git_local/gitflow:/Applications/Sourcetree.app/Contents/Resources/git_local/git-lfs:/usr/bin:/bin:/usr/sbin:/sbin
 Skipping pre-commit hook
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;code&gt;.huskyrc&lt;/code&gt;  파일을 삭제하고 테스트를 진행하면 역시나 PATH를 찾지 못하는 것을 확인할 수 있음.&lt;/p&gt;
 &lt;p&gt;Husky를 사용 중이며 Sourcetree에서 nvm을 로드할 수 있도록 조치해야 한다면 가장 보편적으로 수행하는 방법은 &lt;code&gt;.huskyrc&lt;/code&gt; 에서 PATH 환경 변수를 설정해야 합니다.-  &lt;a href=&#34;https://github.com/typicode/husky/issues/390#issuecomment-545855628&#34;&gt;참고&lt;/a&gt;&lt;/p&gt;

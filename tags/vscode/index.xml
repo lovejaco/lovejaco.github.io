@@ -19,7 +19,7 @@
       <description>&lt;p&gt;먼저, 이 증상은 macOS Mojave(그 이상)에서 나타나는 현상입니다.&lt;/p&gt;
 &lt;h3 id=&#34;커맨드라인-명령으로-code-실행&#34;&gt;커맨드라인 명령으로 code 실행&lt;/h3&gt;
 &lt;p&gt;쉘의 환경 설정에 path를 지정하고, 확인합니다.&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&amp;gt; nano ~/.zshrc
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&amp;gt; nano ~/.zshrc
 export PATH&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;/Applications/Visual&lt;span style=&#34;color:#ae81ff&#34;&gt;\\&lt;/span&gt; Studio&lt;span style=&#34;color:#ae81ff&#34;&gt;\\&lt;/span&gt; Code.app/Contents/Resources/app/bin:$PATH
 
 &amp;gt; which code
@@ -43,7 +43,7 @@ export PATH&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;/Applications
 &lt;h4 id=&#34;2-define-shell-function&#34;&gt;2. Define Shell function&lt;/h4&gt;
 &lt;p&gt;.bashrc 또는 .zshrc 같은 shell의 환결 설정에 함수를 지정하는 방법이 있습니다.
 저는 다음의 조치를 따랐습니다.&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&amp;gt; nano ~/.zshrc
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&amp;gt; nano ~/.zshrc
 code&lt;span style=&#34;color:#f92672&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;{&lt;/span&gt;
     &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;[&lt;/span&gt; -t &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;]&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;[&lt;/span&gt; -t &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;]&lt;/span&gt;; &lt;span style=&#34;color:#66d9ef&#34;&gt;then&lt;/span&gt;
         open -a Visual&lt;span style=&#34;color:#ae81ff&#34;&gt;\\&lt;/span&gt; Studio&lt;span style=&#34;color:#ae81ff&#34;&gt;\\&lt;/span&gt; Code.app &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt;$@&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt;

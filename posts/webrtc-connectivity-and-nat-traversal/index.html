@@ -14,35 +14,32 @@
 <link rel="icon" type="image/x-icon" href="https://lovejaco.github.io/favicon.ico">
 <link rel="apple-touch-icon-precomposed" href="https://lovejaco.github.io/favicon.png">
 
-<link rel="stylesheet" href="https://lovejaco.github.io/css/style.css?rnd=1604589944" />
+<link rel="stylesheet" href="https://lovejaco.github.io/css/style.css?rnd=1640230026" />
 
 
 
 <meta property="og:title" content="WebRTC 연결성 및 NAT 통과 기법" />
 <meta property="og:description" content="WebRTC Connectivity and NAT Traversal" />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://lovejaco.github.io/posts/webrtc-connectivity-and-nat-traversal/" />
+<meta property="og:url" content="https://lovejaco.github.io/posts/webrtc-connectivity-and-nat-traversal/" /><meta property="article:section" content="posts" />
 <meta property="article:published_time" content="2020-06-03T00:00:00+00:00" />
 <meta property="article:modified_time" content="2020-06-03T00:00:00+00:00" />
+
 
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="WebRTC 연결성 및 NAT 통과 기법"/>
 <meta name="twitter:description" content="WebRTC Connectivity and NAT Traversal"/>
 
 
-<script type="application/javascript">
-var doNotTrack = false;
-if (!doNotTrack) {
-	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-	ga('create', 'UA-167094170-1', 'auto');
-	
-	ga('send', 'pageview');
-}
-</script>
- 
+
+    
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+        new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+            j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+            'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+            })(window,document,'script','dataLayer','GTM-NJ53BW7');</script>
+    
+
 
 
 
@@ -238,7 +235,7 @@ relay candidate는 server reflexive candidate( &ldquo;srflx&rdquo;)처럼 생성
 <h2 id="webrtc-call-flow-호출-흐름---api">WebRTC Call Flow (호출 흐름) - API</h2>
 <p>이제 WebRTC 의 연결 흐름에 대해 알아 보겠습니다.</p>
 <h3 id="signalling">Signalling</h3>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">configs</span> <span style="color:#f92672">=</span> {
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">configs</span> <span style="color:#f92672">=</span> {
   <span style="color:#a6e22e">iceServers</span><span style="color:#f92672">:</span> [
     {
       <span style="color:#a6e22e">urls</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;stun:stun.l.google.com:19302&#34;</span>,
@@ -271,12 +268,12 @@ relay candidate는 server reflexive candidate( &ldquo;srflx&rdquo;)처럼 생성
 <p><img src="https://hpbn.co/assets/diagrams/69aa329ffbfae6fd0446de77623c93fb.svg" alt=""></p>
 <h4 id="offer-sdp">Offer SDP</h4>
 <p><img src="https://lh4.googleusercontent.com/5MUbymu8G_iRPSn_ks-eLO8OH7DP6NW_rXMtp9BgWY29T4LZi-JVq2YOXuWey5lmEuCqihms-xzEi2RFUb1SblhtyxbhSyA7cOaAIwrrnolDBpTcQatVPGNBPIjEZr0XtFLXrISdQNc" alt=""></p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#a6e22e">myPeerConnection</span>.<span style="color:#a6e22e">createOffer</span>().<span style="color:#a6e22e">then</span>(<span style="color:#66d9ef">function</span> (<span style="color:#a6e22e">offer</span>) {
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#a6e22e">myPeerConnection</span>.<span style="color:#a6e22e">createOffer</span>().<span style="color:#a6e22e">then</span>(<span style="color:#66d9ef">function</span> (<span style="color:#a6e22e">offer</span>) {
   <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">myPeerConnection</span>.<span style="color:#a6e22e">setLocalDescription</span>(<span style="color:#66d9ef">new</span> <span style="color:#a6e22e">RTCSessionDescription</span>(<span style="color:#a6e22e">offer</span>));
 });
 </code></pre></div><h4 id="answer-sdp">Answer SDP</h4>
 <p><img src="https://lh6.googleusercontent.com/xQc7L7-RTOyNkVTIIjwR6fF_iPziPsyw9Fx3l_GGmN8rlh4l-11ylMHo-X0jg4b0L2k0R_cL9-HoKRGveaoq-v4HegwWqyB8jR5qpNB2Fl1m8MUXZXZmBzzZIgbK9oytd-BBUvgfatg" alt=""></p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#a6e22e">myPeerConnection</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#a6e22e">myPeerConnection</span>
   .<span style="color:#a6e22e">setRemoteDescription</span>(<span style="color:#66d9ef">new</span> <span style="color:#a6e22e">RTCSessionDescription</span>(<span style="color:#a6e22e">description</span>))
   .<span style="color:#a6e22e">then</span>(<span style="color:#66d9ef">function</span> () {
     <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">createMyStream</span>();
@@ -299,7 +296,7 @@ relay candidate는 server reflexive candidate( &ldquo;srflx&rdquo;)처럼 생성
 <p>대화식 연결 설정</p>
 <h4 id="ice-gathering">Ice gathering</h4>
 <p>setLocalDescription 호출이 완료되면 피어는 자신의 ice 후보를 수집합니다.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#a6e22e">pc</span>.<span style="color:#a6e22e">onicecandidate</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">function</span> (<span style="color:#a6e22e">event</span>) {
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#a6e22e">pc</span>.<span style="color:#a6e22e">onicecandidate</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">function</span> (<span style="color:#a6e22e">event</span>) {
   <span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">event</span>.<span style="color:#a6e22e">candidate</span>) {
     <span style="color:#75715e">// event.candidate가 존재하면 원격 유저에게 candidate를 전달합니다.
 </span><span style="color:#75715e"></span>  } <span style="color:#66d9ef">else</span> {
@@ -320,7 +317,7 @@ ICE 후보가 SDP 제안/응답에 포함될 수 있습니다. 이렇게 하려�
 </li>
 </ul>
 <p>Trickle ICE는 시그널 채널을 통해 더 많은 트래픽을 생성하지만 p2p 연결을 시작하는데 필요한 시간이 크게 향상 될 수 있습니다.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#a6e22e">signalingChannel</span>.<span style="color:#a6e22e">onmessage</span> <span style="color:#f92672">=</span> (<span style="color:#a6e22e">receivedString</span>) =&gt; {
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#a6e22e">signalingChannel</span>.<span style="color:#a6e22e">onmessage</span> <span style="color:#f92672">=</span> (<span style="color:#a6e22e">receivedString</span>) =&gt; {
   <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">message</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">JSON</span>.<span style="color:#a6e22e">parse</span>(<span style="color:#a6e22e">receivedString</span>);
   <span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">message</span>.<span style="color:#a6e22e">ice</span>) {
     <span style="color:#a6e22e">pc</span>.<span style="color:#a6e22e">addIceCandidate</span>(<span style="color:#a6e22e">message</span>.<span style="color:#a6e22e">ice</span>).<span style="color:#66d9ef">catch</span>((<span style="color:#a6e22e">e</span>) =&gt; {
@@ -396,7 +393,7 @@ STUN 연결이 확인되면 DTLS(보안 연결)을 이용하여 RTP 스트림에
                 
                 
 
-                <p>© sungyeol.yim, 2020<br>
+                <p>© sungyeol.yim, 2021<br>
 Powered by <a target="_blank" href="https://gohugo.io/">Hugo</a>, theme <a target="_blank" href="https://github.com/mitrichius/hugo-theme-anubis">Anubis</a>.
 </p>
             
